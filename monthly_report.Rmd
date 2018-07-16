@@ -1,0 +1,72 @@
+---
+title: "ASM Journals Monthly Report"
+output: html_notebook
+---
+
+#All Journals (single tables, broken down by journal with composite stat)
+
+**Time to first decision/publication (Days)**
+
+Columns: journal, average & median to first decision, average time to publication (check timespan)
+Row: total
+
+**Acceptance & rejection rates**
+
+Columns: journal, percent accept, reject, and editorial reject
+Row: total
+
+**Submissions**
+
+Columns: journal, each month YTD
+Row: total (also plotted)
+
+**Submissions comparison**
+
+Difference in submissions from previous year
+Columns: journal, 2014 - 2017, 2018 (ytd) 
+Final rows: all journals, all journals except mSystems & mSphere
+
+**Transfers**
+
+Plot number of transfers ytd (origin vs receipt)
+
+**Useage Stats**
+
+PDF, unique users
+
+**Citations**
+
+Box plot by journal and/or by article type
+
+#Each Journal
+
+**Number of original manuscripts assigned to editors**  
+
+Columns: editor, each month YTD, total, average, & percent of total (ytd). Final two rows are total (for month across all editors), and cumulative total (all editors, ytd) (includes all article types & withdrawn/deleted/transferred)
+
+**Time to first decision by editor in days (excluding editorial rejections)**
+
+Columns: editor, average, median, low, high, number of manuscripts. Final row: total
+(decision made in ytd)
+
+**Acceptance and Rejection Rate Report by editor**
+
+Columns: editor, # recommendations, # of accept rec, % of accepts, # of reject rec, % of rejects, # reject w/o review, % reject w/o review
+Rows: editor, column totals
+(final decision made in ytd)
+
+**Acceptance and Rejection Rate Report by article type**
+
+Research vs transfer vs other
+
+**Problem manuscript report**
+
+Revised manuscripts without a final decision after 90 days. 
+Column: manuscript number, editor, recieved date, first decision date, days since first decision, days in folder, days in system, manuscript type, status
+
+**Trends in submissions**
+
+By journal, plot of submissions by month for each year since 2013
+By journal, barplot of submissions by month/year - stacked by submission type (original research vs review vs etc)
+
+
