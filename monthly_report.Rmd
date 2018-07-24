@@ -9,64 +9,76 @@ output: html_notebook
 
 Columns: journal, average & median to first decision, average time to publication (check timespan)
 Row: total
+Data needed: submission date, decision date, publication date, journal title
 
-**Acceptance & rejection rates**
+**Acceptance & rejection rates (YTD?)**
 
 Columns: journal, percent accept, reject, and editorial reject
 Row: total
+Data needed: journal, ejp decisions
 
 **Submissions**
 
 Columns: journal, each month YTD
 Row: total (also plotted)
+Data needed: journal, submission date
 
 **Submissions comparison**
 
 Difference in submissions from previous year
 Columns: journal, 2014 - 2017, 2018 (ytd) 
 Final rows: all journals, all journals except mSystems & mSphere
+Data needed: journal, submission date - everything from last 4-5 years
 
 **Transfers**
 
 Plot number of transfers ytd (origin vs receipt)
+Data needed: if transfer, journal submitted, journal recieved/accepted, date transferred
 
 **Useage Stats**
 
 PDF, unique users
+Data needed: number views, number unique users
 
 **Citations**
 
 Box plot by journal and/or by article type
+Data needed: doi, WoS citation stats, manuscript type
 
 #Each Journal
 
 **Number of original manuscripts assigned to editors**  
 
 Columns: editor, each month YTD, total, average, & percent of total (ytd). Final two rows are total (for month across all editors), and cumulative total (all editors, ytd) (includes all article types & withdrawn/deleted/transferred)
+Data needed: full editor name, journal, date of submission, date assigned to editor, current status (withdrawn/deleted/transferred), decision
 
 **Time to first decision by editor in days (excluding editorial rejections)**
 
 Columns: editor, average, median, low, high, number of manuscripts. Final row: total
 (decision made in ytd)
+Data needed: full editor name, journal, decision, submission date, decision date
 
 **Acceptance and Rejection Rate Report by editor**
 
 Columns: editor, # recommendations, # of accept rec, % of accepts, # of reject rec, % of rejects, # reject w/o review, % reject w/o review
 Rows: editor, column totals
 (final decision made in ytd)
+Data needed: editor name, decisions
 
 **Acceptance and Rejection Rate Report by article type**
 
 Research vs transfer vs other
+Data needed: manuscript type, category, decision, editor name
 
 **Problem manuscript report**
 
 Revised manuscripts without a final decision after 90 days. 
 Column: manuscript number, editor, recieved date, first decision date, days since first decision, days in folder, days in system, manuscript type, status
+Data needed: what status is problematic?, days in system, days in folder, days since first decision
 
 **Trends in submissions**
 
 By journal, plot of submissions by month for each year since 2013
 By journal, barplot of submissions by month/year - stacked by submission type (original research vs review vs etc)
-
+Data needed: submission date for everything since 2013, manuscript type, journal
 
