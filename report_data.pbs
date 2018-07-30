@@ -1,0 +1,29 @@
+#!/bin/sh
+#PBS -N monthly_report
+#PBS -l nodes=1:ppn=8,mem=46gb
+#PBS -l walltime=400:00:00
+#PBS -j oe
+#PBS -m abe
+#PBS -V
+#PBS -M akhagan@umich.edu
+#PBS -l qos=flux
+#PBS -q fluxod
+#PBS -A pschloss_fluxod
+
+pwd
+
+cd $PBS_O_WORKDIR
+
+pwd
+
+[insert command to deencrypt]
+
+Rscript code/monthly_report.R
+
+[insert command to encrypt]
+
+[command to confirm encryption completed]
+
+stat -f $PBS_JOBID
+~                                                                               
+~       
