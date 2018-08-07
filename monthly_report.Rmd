@@ -11,6 +11,7 @@ Columns: journal, average & median to first decision, average time to publicatio
 Row: total
 Data needed: submission date, decision date, publication date, journal title
 
+
 **Acceptance & rejection rates (YTD?)**
 
 Columns: journal, percent accept, reject, and editorial reject
