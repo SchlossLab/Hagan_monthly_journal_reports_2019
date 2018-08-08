@@ -5,9 +5,18 @@
 
 needed_data <- clean_test_data %>% 
   filter(version == "0") %>% 
+  filter(Journal != "NA") %>% 
   select(submitted.date, Journal, manuscript.number) %>% 
   separate(submitted.date, "submitted.date", sep = " ", extra = "drop") %>% 
   separate(submitted.date, c("year", "month", "day"), sep = "-") %>% distinct()
 
-summary <- needed_data %>% group_by(Journal, year) %>% summarize(n = n()) %>% 
-  spread(year, n)
+journ_by_year <- needed_data %>% group_by(Journal, year) %>% summarize(n = n()) %>% 
+  spread(year, n) %>% as.data.frame()
+
+Journal <- "Total"
+
+add_sums <- needed_data %>% group_by(year) %>% summarise(n = n()) %>% spread(year, n) %>% as.data.frame() %>% cbind(Journal, .) %>% rbind(journ_by_year, .)
+
+diff_from_prev_year <- round((((add_sums[,ncol(add_sums)]-add_sums[,ncol(add_sums)-1])/add_sums[,ncol(add_sums)-1])*100), digits = 2)
+
+all_summary <- cbind(add_sums, diff_from_prev_year)

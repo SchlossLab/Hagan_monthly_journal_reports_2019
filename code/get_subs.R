@@ -12,11 +12,11 @@ needed_data <- clean_test_data %>% select(submitted.date, Journal, manuscript.nu
                             "Jun" = "06", "Jul" = "07", "Aug" = "08", "Sep" = "09", "Oct" = "10",
                             "Nov" = "11", "Dec" = "12"))
 
-summarized <- needed_data %>% group_by(Journal, month) %>% summarise(n = n()) %>% 
+subs_by_journ <- needed_data %>% group_by(Journal, month) %>% summarise(n = n()) %>% 
   filter(Journal != "NA") %>% 
-  spread(., key = month, value = n) %>% 
-  cbind(.rowSums(2, 13))
+  spread(., key = month, value = n) %>% as.data.frame()
 
-summary_row <- data.frame("All", colSums(summarized[,2:13])) %>% 
-  spread(., key = , value = [,2])
-  mutate(YTD = rowSums(.[,2:13]))
+Journal <- "Total"
+
+sum_month <- needed_data %>% group_by(month) %>% summarize(n = n()) %>% 
+  spread(month, n) %>% as.data.frame() %>% cbind(Journal, .) %>% rbind(subs_by_journ, .)
