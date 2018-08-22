@@ -5,23 +5,23 @@
 #(final decision made in ytd)
 #Data needed: editor name, decisions
 
-needed_data <- clean_test_data %>% filter(Journal == "AEM") %>% 
-  select(editor_fix, manuscript.number, EJP.decision, version.reviewed) %>% distinct()
+editor_acc_rej_data <- clean_test_data %>% filter(Journal == "mBio") %>% 
+  filter(EJP.decision == "Reject"| EJP.decision == "Accept, no revision") %>% 
+  select(editor_fix, manuscript.number, EJP.decision, version.reviewed) %>% unique()
 
-all_desc <- fixed_data %>% group_by(manuscript.number) %>% summarise(n = n()) %>% nrow()
+editor_all_desc <- editor_acc_rej_data %>% group_by(editor_fix) %>% summarise(N = n())
 
-ed_reject <- fixed_data %>% filter(EJP.decision == "Reject" & is.na(version.reviewed)) %>%
-  group_by(editor_fix) %>% summarise(Editorial_rejections = n()) %>% 
-  as.data.frame() %>% 
-  mutate(percent_ed_rej = get_percent(Editorial_rejections, all_desc))
+editor_ed_reject <- editor_acc_rej_data %>% filter(EJP.decision == "Reject" & is.na(version.reviewed)) %>%
+  group_by(editor_fix) %>% summarise(Editorial_rejections = n()) %>% as.data.frame() %>% View()
+  mutate(percent_ed_rej = get_percent(Editorial_rejections, editor_all_desc$N)) #no rejections assigned to editors for this data
 
-reject <- fixed_data %>% filter(EJP.decision == "Reject" & !is.na(version.reviewed)) %>% 
+editor_reject <- editor_acc_rej_data %>% filter(EJP.decision == "Reject" & !is.na(version.reviewed)) %>% 
   group_by(editor_fix) %>% summarise(Rejected = n()) %>% as.data.frame() %>% 
-  mutate(percent_rej = get_percent(Rejected, all_desc))
+  mutate(percent_rej = get_percent(Rejected, editor_all_desc$N)) #no rejections assigned to editors for this dataset
 
-accept <- fixed_data %>% filter(EJP.decision == "Accept, no revision") %>% 
+editor_accept <- editor_acc_rej_data %>% filter(EJP.decision == "Accept, no revision") %>% 
   group_by(editor_fix) %>% summarise(Accepted = n()) %>% as.data.frame() %>% 
-  mutate(percent_accepted = get_percent(Accepted, all_desc))
+  mutate(percent_accepted = get_percent(Accepted, editor_all_desc$N))
 
-summary <- bind_cols(ed_reject, reject[,2:3], accept[,2:3]) #need to test w. newer data b/c of rej. stats have no editor
+editor_acc_rej_summary <- bind_cols(editor_ed_reject, editor_reject[,2:3], editor_accept[,2:3]) #need to test w. newer data b/c of rej. stats have no editor
 

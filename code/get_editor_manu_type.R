@@ -3,7 +3,12 @@
 #  Research vs transfer vs other
 #Data needed: manuscript type, category, decision, editor name
 
-needed_data <- clean_test_data %>% filter(Journal == "AEM") %>% 
-  select(manuscript.number, manuscript.type, category, EJP.decision, editor_fix) %>% distinct()
+editor_manu_data <- clean_test_data %>% filter(Journal == "AEM") %>% 
+  mutate(manuscript.type = fct_collapse(manuscript.type, 
+                                        "Minireview" = c("Minireview", "Invited Minireview"),
+                                        "Research Article" = c("Full-length text", "Full-Length Text", "Research Article"),
+                                        "Observation" = c("Short Form", "Short-Form Paper", "Observation"))) %>% 
+  filter(manuscript.type == c("Research Article", "Minireview", "Observation") %>% 
+  select(manuscript.number, manuscript.type, category, EJP.decision, editor_fix) %>% unique()
 
-needed_data %>% group_by(editor_fix, manuscript.type) %>% summarise(n = n()) %>% View()
+editor_manu_all <- editor_manu_data %>% group_by(editor_fix, manuscript.type) %>% summarise(N = n())

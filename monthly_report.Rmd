@@ -3,28 +3,55 @@ title: "ASM Journals Monthly Report"
 output: html_notebook
 ---
 
+```{r setup}
+library(kableExtra)
+source("code/test_data.R") #data for report
+```
+
 #All Journals (single tables, broken down by journal with composite stat)
 
-**Time to first decision/publication (Days)**
+**Time to first decision/publication (Days)** 
 
 Columns: journal, average & median to first decision, average time to publication (check timespan)
 Row: total
 Data needed: submission date, decision date, publication date, journal title
 
 
-**Acceptance & rejection rates (YTD?)**
+**Acceptance & rejection rates (YTD?)** 
+```{r acc_rej_rates, results='asis'}
+#source("get_acc_rej_rates.R")
+
+knitr::kable(acc_rej_summary, format = "html", digits = 2, col.names = c("Journal", "N", "%", "N", "%", "N", "%")) %>%
+  add_header_above(c(" ", "Editorial Rejections" = 2, "Rejections" = 2, "Accepted" = 2)) %>% 
+  #footnote(general = "Median citations of all articles grouped by journal and outcome (e.g., accepted, rejected with resubmissions accepted, and published elsewhere following rejection decision)") %>% 
+  kable_styling()
+```
 
 Columns: journal, percent accept, reject, and editorial reject
 Row: total
 Data needed: journal, ejp decisions
 
 **Submissions**
+```{r subs}
+#source("get_subs.R")
+
+knitr::kable(sum_month, format = "html", digits = 2) %>% 
+  #footnote(general = "Median citations of all articles grouped by journal and outcome (e.g., accepted, rejected with resubmissions accepted, and published elsewhere following rejection decision)") %>% 
+  kable_styling()
+```
 
 Columns: journal, each month YTD
 Row: total (also plotted)
 Data needed: journal, submission date
 
-**Submissions comparison**
+**Submissions comparison** 
+```{r subs_comp}
+#source("get_subs_diff.R")
+
+knitr::kable(subs_dif_summary, format = "html", digits = 2) %>% 
+  #footnote(general = "Median citations of all articles grouped by journal and outcome (e.g., accepted, rejected with resubmissions accepted, and published elsewhere following rejection decision)") %>% 
+  kable_styling()
+```
 
 Difference in submissions from previous year
 Columns: journal, 2014 - 2017, 2018 (ytd) 
@@ -49,17 +76,36 @@ Data needed: doi, WoS citation stats, manuscript type
 #Each Journal
 
 **Number of original manuscripts assigned to editors**  
+```{r editor_assign}
+#source("get_editor_assign.R")
+
+knitr::kable(editor_assign_all_summary, format = "html", digits = 2) %>% 
+  #footnote(general = "Median citations of all articles grouped by journal and outcome (e.g., accepted, rejected with resubmissions accepted, and published elsewhere following rejection decision)") %>% 
+  kable_styling()
+```
 
 Columns: editor, each month YTD, total, average, & percent of total (ytd). Final two rows are total (for month across all editors), and cumulative total (all editors, ytd) (includes all article types & withdrawn/deleted/transferred)
 Data needed: full editor name, journal, date of submission, date assigned to editor, current status (withdrawn/deleted/transferred), decision
 
-**Time to first decision by editor in days (excluding editorial rejections)**
+**Time to first decision by editor in days (excluding editorial rejections)** 
+```{r, editor_dec}
+#source("get_editor_desc_days.R")
+
+knitr::kable(editor_desc_year_sums, format = "html", digits = 2) %>% 
+  #footnote(general = "Median citations of all articles grouped by journal and outcome (e.g., accepted, rejected with resubmissions accepted, and published elsewhere following rejection decision)") %>% 
+  kable_styling()
+```
 
 Columns: editor, average, median, low, high, number of manuscripts. Final row: total
 (decision made in ytd)
 Data needed: full editor name, journal, decision, submission date, decision date
 
 **Acceptance and Rejection Rate Report by editor**
+```{r, editor_acc_rej}
+#source("get_editor_acc_rej_rates.R")
+
+#can't with this dataset
+```
 
 Columns: editor, # recommendations, # of accept rec, % of accepts, # of reject rec, % of rejects, # reject w/o review, % reject w/o review
 Rows: editor, column totals
@@ -67,11 +113,14 @@ Rows: editor, column totals
 Data needed: editor name, decisions
 
 **Acceptance and Rejection Rate Report by article type**
+```{r, editor_manu_type}
+source("get_editor_manu_type.R")
+```
 
 Research vs transfer vs other
 Data needed: manuscript type, category, decision, editor name
 
-**Problem manuscript report**
+**Problem manuscript report** 
 
 Revised manuscripts without a final decision after 90 days. 
 Column: manuscript number, editor, recieved date, first decision date, days since first decision, days in folder, days in system, manuscript type, status
