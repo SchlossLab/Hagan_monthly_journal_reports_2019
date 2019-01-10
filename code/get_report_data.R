@@ -28,7 +28,7 @@ published_data <- full_join(citation_select, usage_select, by = c("Date of Publi
 
 report_data <- left_join(manu_data, published_data, by = c("doi" = "Article DOI (article_metadata)"))
 
-report_data <- rename(report_data, "editor.id" = "person.id.x", "reviewer.id" = "person.id.y") #not sure what to do here
+#report_data <- rename(report_data, "editor.id" = "person.id.x", "reviewer.id" = "person.id.y") #based on test data
 
 write_csv(report_data, paste0("processed_data/report_data", this_ym,".csv"))
 
