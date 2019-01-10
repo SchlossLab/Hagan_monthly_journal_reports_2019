@@ -1,5 +1,7 @@
 monthly_report_examples/
 processed_data/
+reports/
+monthly_reports.*
 .Rproj.user
 .Rhistory
 .RData
