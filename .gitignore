@@ -1,8 +1,8 @@
 monthly_report_examples/
 processed_data/
 reports/
-monthly_reports.Rmd
-monthly_reports.nb.html
+monthly_report.Rmd
+monthly_report.nb.html
 monthly_report_cache
 monthly_report_files
 .Rproj.user
