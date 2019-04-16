@@ -102,19 +102,19 @@ parse_xml <- function(input_xmltop){
     mutate(days.to.decision = as.duration(ymd_hms(submitted.date) %--% ymd_hms(decision.date))/ddays(1))#calculate days to make decision for each version
   
   #transfer data
-  transfers <- get_column(input_xmltop, "//transfers", "transfer")#scrapes all nodes in person and returns as df
-  names(transfers) <- c("journal", "transfer.date", "transfer.msno", "transfer_type") 
+  transfers <- get_column(input_xmltop, "//transfers/transfer", "transfer.journal")#scrapes all nodes in person and returns as df
+  if(dim(transfers)[[2]] == 4){names(transfers) <- c('transfer.journal', 'transfer.date', 'transfer.msno', 'transfer_type')}else{names(transfers) <- "transfer.journal"} 
   transfer_data <- cbind(data.frame(manu_number), transfers) 
 
   #dataframe of manuscript meta data
   manu_meta <- cbind(manu_number, related_manu, is_resubmission, category, title, commissioned,
-                     manuscript_type, number_authors, doi, ready_for_production_date, published_online_date,
-                     journal_title, open_access)
+                     manuscript_type, number_authors, doi, ready_for_production_date, 
+                     published_online_date, journal_title, open_access)
   
   #full join of manuscript meta data & decisions
   manu_data <- list(version_meta, manu_meta, transfer_data, people) %>% #list all dfs
     reduce(full_join, by = "manuscript.number") %>% #join by manuscript identifier
-    rename("reviewer.id" = "person.id.x", "editor.id" = "person.id.y")
+    rename("editor.id" = "person.id")
   
   print(paste("completed", manu_number[[1]])) #status indicator for troubleshooting help
   
