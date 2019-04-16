@@ -1,56 +1,39 @@
 ---
-title: "ASM Journals Monthly Report"
-output: html_notebook
+title: "ASM All Journals Monthly Report"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  html_document:
+    df_print: paged
 ---
 
-```{r setup}
-library(kableExtra)
-source("code/test_data.R") #data for report
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+
 ```
 
-#All Journals (single tables, broken down by journal with composite stat)
+#Submissions
+```{r, asm_subs_plot, results='asis'}
+source("code/monthly_report/plot_asm_subs.R")
 
-**Time to first decision/publication (Days)** 
-
-Columns: journal, average & median to first decision, average time to publication (check timespan)
-Row: total
-Data needed: submission date, decision date, publication date, journal title
-
-
-**Acceptance & rejection rates (YTD?)** 
-```{r acc_rej_rates, results='asis'}
-#source("get_acc_rej_rates.R")
-
-knitr::kable(acc_rej_summary, format = "html", digits = 2, col.names = c("Journal", "N", "%", "N", "%", "N", "%")) %>%
-  add_header_above(c(" ", "Editorial Rejections" = 2, "Rejections" = 2, "Accepted" = 2)) %>% 
-  #footnote(general = "Median citations of all articles grouped by journal and outcome (e.g., accepted, rejected with resubmissions accepted, and published elsewhere following rejection decision)") %>% 
-  kable_styling()
+asm_subs_plot
 ```
 
-Columns: journal, percent accept, reject, and editorial reject
-Row: total
-Data needed: journal, ejp decisions
-
-**Submissions**
-```{r subs}
-#source("get_subs.R")
+#Submissions YTD
+```{r, subs_table}
+source("code/monthly_report/get_subs.R")
 
 knitr::kable(sum_month, format = "html", digits = 2) %>% 
-  #footnote(general = "Median citations of all articles grouped by journal and outcome (e.g., accepted, rejected with resubmissions accepted, and published elsewhere following rejection decision)") %>% 
+  footnote(general = "Submissions recieved by each journal for this calendar year") %>% 
   kable_styling()
 ```
 
-Columns: journal, each month YTD
-Row: total (also plotted)
-Data needed: journal, submission date
+#Submissions comparison 
+```{r, subs_comp}
+#source("code/monthly_report/get_subs_diff.R")
 
-**Submissions comparison** 
-```{r subs_comp}
-#source("get_subs_diff.R")
-
-knitr::kable(subs_dif_summary, format = "html", digits = 2) %>% 
+#knitr::kable(subs_dif_summary, format = "html", digits = 2) %>% 
   #footnote(general = "Median citations of all articles grouped by journal and outcome (e.g., accepted, rejected with resubmissions accepted, and published elsewhere following rejection decision)") %>% 
-  kable_styling()
+  #kable_styling()
 ```
 
 Difference in submissions from previous year
@@ -58,77 +41,58 @@ Columns: journal, 2014 - 2017, 2018 (ytd)
 Final rows: all journals, all journals except mSystems & mSphere
 Data needed: journal, submission date - everything from last 4-5 years
 
-**Transfers**
+
+#Time to first decision or publication 
+```{r, time_to_desc, results='asis'}
+source("code/monthly_report/get_day_stats.R")
+
+knitr::kable(day_summary, format = "html", digits = 2, col.names = c("Journal", "N", "Avg", "Med", "N", "Avg")) %>%
+  add_header_above(c(" ", "Days to First Decision" = 3, "Days to Publication" = 2)) %>% 
+  footnote(general = "Data presented in days, and includes all manuscripts submitted and reviewed in the last 12 months (does not include editorial rejections)") %>% 
+  kable_styling()
+```
+
+#Acceptance & rejection rates 
+```{r, acc_rej_rates, results='asis'}
+source("code/monthly_report/get_acc_rej_rates.R")
+
+knitr::kable(acc_rej_summary, format = "html", digits = 2, col.names = c("Journal", "N", "%", "N", "%", "N", "%")) %>%
+  add_header_above(c(" ", "Editorial Rejections" = 2, "Rejections" = 2, "Accepted" = 2)) %>% 
+  footnote(general = "Includes all manuscripts with a decision made in the last 12 months") %>% 
+  kable_styling()
+```
+
+#Transfers
 
 Plot number of transfers ytd (origin vs receipt)
 Data needed: if transfer, journal submitted, journal recieved/accepted, date transferred
 
-**Useage Stats**
+#Useage Stats of Articles Published in Last 12 Months
+```{r, journ_usage_barplot}
+source("code/monthly_report/get_journ_usage_barplot.R")
 
-PDF, unique users
-Data needed: number views, number unique users
-
-**Citations**
-
-Box plot by journal and/or by article type
-Data needed: doi, WoS citation stats, manuscript type
-
-#Each Journal
-
-**Number of original manuscripts assigned to editors**  
-```{r editor_assign}
-#source("get_editor_assign.R")
-
-knitr::kable(editor_assign_all_summary, format = "html", digits = 2) %>% 
-  #footnote(general = "Median citations of all articles grouped by journal and outcome (e.g., accepted, rejected with resubmissions accepted, and published elsewhere following rejection decision)") %>% 
-  kable_styling()
+abstract_plot
+html_plot
+pdf_plot
 ```
 
-Columns: editor, each month YTD, total, average, & percent of total (ytd). Final two rows are total (for month across all editors), and cumulative total (all editors, ytd) (includes all article types & withdrawn/deleted/transferred)
-Data needed: full editor name, journal, date of submission, date assigned to editor, current status (withdrawn/deleted/transferred), decision
 
-**Time to first decision by editor in days (excluding editorial rejections)** 
-```{r, editor_dec}
-#source("get_editor_desc_days.R")
+```{r, asm_usage_overtime,  fig.height = 10, fig.width= 8}
+source("code/monthly_report/get_asm_usage_overtime.R")
 
-knitr::kable(editor_desc_year_sums, format = "html", digits = 2) %>% 
-  #footnote(general = "Median citations of all articles grouped by journal and outcome (e.g., accepted, rejected with resubmissions accepted, and published elsewhere following rejection decision)") %>% 
-  kable_styling()
+asm_time
+pdf_cat
+html_cat
+abstract_cat
 ```
 
-Columns: editor, average, median, low, high, number of manuscripts. Final row: total
-(decision made in ytd)
-Data needed: full editor name, journal, decision, submission date, decision date
 
-**Acceptance and Rejection Rate Report by editor**
-```{r, editor_acc_rej}
-#source("get_editor_acc_rej_rates.R")
+#Total Cites for Articles Published in Last 12 Months
+```{r, asm_cites_journ}
+source("code/monthly_report/get_asm_cites_journ.R")
 
-#can't with this dataset
+journal_cites_plot
+cat_cites_plot
 ```
 
-Columns: editor, # recommendations, # of accept rec, % of accepts, # of reject rec, % of rejects, # reject w/o review, % reject w/o review
-Rows: editor, column totals
-(final decision made in ytd)
-Data needed: editor name, decisions
-
-**Acceptance and Rejection Rate Report by article type**
-```{r, editor_manu_type}
-source("get_editor_manu_type.R")
-```
-
-Research vs transfer vs other
-Data needed: manuscript type, category, decision, editor name
-
-**Problem manuscript report** 
-
-Revised manuscripts without a final decision after 90 days. 
-Column: manuscript number, editor, recieved date, first decision date, days since first decision, days in folder, days in system, manuscript type, status
-Data needed: what status is problematic?, days in system, days in folder, days since first decision
-
-**Trends in submissions**
-
-By journal, plot of submissions by month for each year since 2013
-By journal, barplot of submissions by month/year - stacked by submission type (original research vs review vs etc)
-Data needed: submission date for everything since 2013, manuscript type, journal
 

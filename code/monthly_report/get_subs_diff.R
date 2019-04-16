@@ -4,6 +4,7 @@
 #Data needed: journal, submission date - everything from last 4-5 years
 
 subs_dif_data <- data %>% 
+  filter(ejp.decision != "Withdrawn") %>% 
   filter(version == "0") %>% filter(journal != "NA") %>% #restrict to inital subs & drop journals
   select(approved.date, journal, manuscript.number) %>% #pull necessary columns
   separate(approved, "submitted.date", sep = " ", extra = "drop") %>% #drop time from sub date

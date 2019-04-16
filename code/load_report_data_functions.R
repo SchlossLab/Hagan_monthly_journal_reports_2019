@@ -1,7 +1,7 @@
 library(tidyverse)
 library(lubridate)
 
-data <- read_csv("processed_data/clean_test_data.csv") %>% 
+data <- read_csv(paste0("processed_data/report_data", this_ym,".csv")) %>% 
   filter(journal != "EC") %>% filter(journal != "genomeA") %>% filter(journal != "CVI")
 
 this_year <- today() %>% year()
@@ -39,6 +39,11 @@ test_list <- function(all, decision, group){
 #function to restrict selection to manuscripts with date X that occurs in the last 12 months
 filter_12_mo <- function(x, date){
   filter(x, date %within% interval(start = (today() - months(12)), end = today()))
+}
+
+#function to restrict selection to manuscripts with date X that occurs in the previous 12 to 36 months -- relevant cites timeframe
+filter_12_to_36_mo <- function(x, date){
+  filter(x, date %within% interval(start = (today() - months(36)), end = today() - months(12)))
 }
 
 #following scripts need work: get_editor_manu_type.R, get_subs_diff.R, 

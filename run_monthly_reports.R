@@ -20,10 +20,10 @@ this_ym <- today() %>% str_extract(., "\\d{4}-\\d{2}") #the month & year of repo
 source("code/report_parse.R")
 
 #load, join, & clean data
-source("code/get_report_data.R")
+source("code/merge_clean_report_data.R")
 
 # get dataset for report
-source("code/get_report_functions.R")
+source("code/load_report_data_functions.R")
 
 #get preferred plot settings for ggplot
 source("code/plot_options.R")
