@@ -101,24 +101,18 @@ parse_xml <- function(input_xmltop){
                         version, approved_date, submitted_date, decision_date, decision, stringsAsFactors = FALSE) %>% 
     mutate(days.to.decision = as.duration(ymd_hms(submitted.date) %--% ymd_hms(decision.date))/ddays(1))#calculate days to make decision for each version
   
-  #reviwer specific data
-  reviewer_id <- get_column(input_xmltop, "//referee-person-id", "person.id") #all listed reviewers
-  reviewer_start <- get_column(input_xmltop, "//referee-started-date", "review.start") #review start date
-  reviewer_return <- get_column(input_xmltop, "//referee-received-date", "review.return") #review completed date
+  #transfer data
+  transfers <- get_column(input_xmltop, "//transfers", "transfer")#scrapes all nodes in person and returns as df
+  names(transfers) <- c("journal", "transfer.date", "transfer.msno", "transfer_type") 
+  transfer_data <- cbind(data.frame(manu_number), transfers) 
 
-    #join referee data
-  review_outcome <- cbind(data.frame(manu_number, stringsAsFactors = FALSE), #manu number as common identifier
-                          reviewer_id, reviewer_start, reviewer_return, stringsAsFactors = FALSE) %>% 
-    mutate(days.to.review = as.duration(ymd_hms(review.start) %--% ymd_hms(review.return))/ddays(1), #calc how long review took
-           version.reviewed = assign_version(review.return, version_meta)) #associate review decision with correct version
-  
   #dataframe of manuscript meta data
   manu_meta <- cbind(manu_number, related_manu, is_resubmission, category, title, commissioned,
                      manuscript_type, number_authors, doi, ready_for_production_date, published_online_date,
                      journal_title, open_access)
   
   #full join of manuscript meta data & decisions
-  manu_data <- list(version_meta, manu_meta, review_outcome, people) %>% #list all dfs
+  manu_data <- list(version_meta, manu_meta, transfer_data, people) %>% #list all dfs
     reduce(full_join, by = "manuscript.number") %>% #join by manuscript identifier
     rename("reviewer.id" = "person.id.x", "editor.id" = "person.id.y")
   
