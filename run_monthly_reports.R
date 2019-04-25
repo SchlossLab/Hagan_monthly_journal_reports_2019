@@ -30,7 +30,7 @@ source("code/plot_options.R")
 
 
 # create ASM report (this is outside the loop so it is only called once)
-rmarkdown::render('monthly_report.Rmd',  # file 2
+rmarkdown::render('code/monthly_report.Rmd',  # file 2
                   output_file =  paste0("ASM_journals_report_", this_ym, ".html"), 
                   output_dir = 'reports')
 
