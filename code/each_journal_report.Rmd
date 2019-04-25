@@ -25,6 +25,19 @@ source("each_journal_monthly_report/get_journ_subs.R")
 plot_YTD_subs
 ```
 
+#Transfers
+```{r, recent_transfers}
+source("each_journal_monthly_report/get_transfers.R")
+
+knitr::kable(J_recent_transfers, format = "html", digits = 2,  col.names = c("Date", "From", "Manuscript Number", "Title", "Editor", "Decision")) %>%
+  footnote(general = "Transfers received in the last month") %>% 
+  kable_styling()
+
+knitr::kable(J_transfers_ytd, format = "html", digits = 2,  col.names = c("Decision", "N", "Percent")) %>%
+  footnote(general = "Final outcomes on transfers recieved in the last 12 months") %>% 
+  kable_styling()
+```
+
 #Useage Stats
 ```{r, journ_usage_barplot, fig.width= 8}
 source("each_journal_monthly_report/get_journ_usage.R")
@@ -103,7 +116,10 @@ knitr::kable(editor_acc_rej_summary, format = "html", digits = 2,  col.names = c
 
 
 #Problem manuscript report
+```{r, problem_manus}
+source("each_journal_monthly_report/get_problem_manus.R")
 
-Revised manuscripts without a final decision after 90 days. 
-Column: manuscript number, editor, recieved date, first decision date, days since first decision, days in folder, days in system, manuscript type, status
-Data needed: what status is problematic?, days in system, days in folder, days since first decision
+knitr::kable(problem_data, format = "html", digits = 2,  col.names = c("Manuscript Number", "Editor", "Recieved Date", "Decision Date", "Days Since Decision", "Status")) %>%
+  kable_styling()
+```
+

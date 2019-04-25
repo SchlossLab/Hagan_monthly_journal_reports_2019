@@ -45,5 +45,3 @@ filter_12_mo <- function(x, date){
 filter_12_to_36_mo <- function(x, date){
   filter(x, date %within% interval(start = (today() - months(36)), end = today() - months(12)))
 }
-
-#following scripts need work: get_editor_manu_type.R, get_subs_diff.R, 

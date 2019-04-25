@@ -62,10 +62,16 @@ knitr::kable(acc_rej_summary, format = "html", digits = 2, col.names = c("Journa
   kable_styling()
 ```
 
-#Transfers
+#Transfers YTD
+```{r, transfers}
+source("code/monthly_report/get_transfer_journals.R")
 
-Plot number of transfers ytd (origin vs receipt)
-Data needed: if transfer, journal submitted, journal recieved/accepted, date transferred
+plot_trans
+
+knitr::kable(all_transfers_ytd, format = "html", digits = 2, col.names = c("Decision", "N", "%")) %>% 
+  footnote(general = "Final decision on manuscripts transferred in this calendar year.") %>% 
+  kable_styling()
+```
 
 #Useage Stats of Articles Published in Last 12 Months
 ```{r, journ_usage_barplot}

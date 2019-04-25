@@ -95,6 +95,7 @@ parse_xml <- function(input_xmltop){
   open_access <- get_column(input_xmltop, "//open-access", "open.access") %>% head(n =1)
   number_authors <- xmlToDataFrame(nodes = getNodeSet(input_xmltop, "//author-person-id")) %>% 
     n_distinct()#remove duplicated authors (b/c listed more than once if>2 versions)
+  status <- get_column(input_xmltop, "//current-stage", "status")
   
   #join version data
   version_meta <- cbind(data.frame(manu_number, stringsAsFactors = FALSE), #use manuscript number as unqiue identifier
@@ -103,18 +104,18 @@ parse_xml <- function(input_xmltop){
   
   #transfer data
   transfers <- get_column(input_xmltop, "//transfers/transfer", "transfer.journal")#scrapes all nodes in person and returns as df
-  if(dim(transfers)[[2]] == 4){names(transfers) <- c('transfer.journal', 'transfer.date', 'transfer.msno', 'transfer_type')}else{names(transfers) <- "transfer.journal"} 
+  if(dim(transfers)[[2]] == 4){names(transfers) <- c('transfer.journal', 'transfer.date', 'transfer.msno', 'transfer.type')}else{names(transfers) <- "transfer.journal"} 
   transfer_data <- cbind(data.frame(manu_number), transfers) 
 
   #dataframe of manuscript meta data
   manu_meta <- cbind(manu_number, related_manu, is_resubmission, category, title, commissioned,
                      manuscript_type, number_authors, doi, ready_for_production_date, 
-                     published_online_date, journal_title, open_access)
+                     published_online_date, journal_title, open_access, status)
   
   #full join of manuscript meta data & decisions
   manu_data <- list(version_meta, manu_meta, transfer_data, people) %>% #list all dfs
     reduce(full_join, by = "manuscript.number") %>% #join by manuscript identifier
-    rename("editor.id" = "person.id")
+    rename("editor.id" = "person.id", "number.authors" = "number_authors")
   
   print(paste("completed", manu_number[[1]])) #status indicator for troubleshooting help
   
