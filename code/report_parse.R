@@ -1,14 +1,12 @@
 source("code/report_xml_parse_functions.R") #source functions & libraries
 
-all_xml_list <- list.files(path = "ejp_transfer", pattern = "\\.xml$", full.names = TRUE, recursive = TRUE) #generate list of xml files from all journals files
+all_xml_list <- list.files(path = "ejp_transfer*", pattern = "\\.xml$", full.names = TRUE, recursive = TRUE) #generate list of xml files from all journals files
 
 xml_top_list <- lapply(all_xml_list, get_top) #parse & get top root of all xml files
 
 print("Starting report parse")
 
-top_test <- xml_top_list %>% head(n =50)
-
-report_parse <- map_df(top_test, parse_xml) #parse for manuscript info
+report_parse <- map_df(xml_top_list, parse_xml) #parse for manuscript info
 
 print("Completed report parse")
 
