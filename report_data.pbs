@@ -2,6 +2,7 @@
 #PBS -N monthly_report
 #PBS -l nodes=1:ppn=8,mem=46gb
 #PBS -l walltime=400:00:00
+#PBS -n ${password}
 #PBS -j oe
 #PBS -m abe
 #PBS -V
@@ -16,14 +17,41 @@ cd $PBS_O_WORKDIR
 
 pwd
 
-[insert command to deencrypt]
+dir="ejp_transfer_$(date +'%Y_%m_%d')"
 
-Rscript code/monthly_report.R
+mkdir $dir
 
-[insert command to encrypt]
+cd $dir
+
+pwd
+
+sftp pats@sftp.ejpress.com <<EOF
+get *.zip .
+exit
+EOF
+
+unzip '*.zip'
+
+cd ../
+
+pwd
+
+Rscript code/run_monthly_reports.R
+
+rm $dir/*.xml
+
+tar czf $dir.tar.gz $dir
+
+gpg -c $dir.tar.gz [need to add password variable]
 
 [command to confirm encryption completed]
 
+rm $dir/*.zip $dir.tar.gz
+
+rmdir $dir
+
+ls
+
 stat -f $PBS_JOBID
 ~                                                                               
-~       
+~     
