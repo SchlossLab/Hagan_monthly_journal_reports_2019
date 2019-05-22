@@ -37,13 +37,20 @@ usage_data <- map_df(usage_files, read_csv)
 usage_select <- usage_data %>% select(`Article Date of Publication (article_metadata)`, `Article DOI (article_metadata)`, `Measure Names`,
                                       `Measure Values`, `Published Months`)
 
-citation_files <- list.files("processed_data/citations", full.names = TRUE)
-#new method will have single dataset -- change to reflect 
-citation_data <- map_df(citation_files, read_csv)
+citation_data <- read_csv("processed_data/HAT-Articles_data (3).csv")
 
 citation_select <- citation_data %>% select(`Article DOI (article_metadata)`, `Date of Publication`, `Measure Names`, `Measure Values`, `Published Months`)
 
+jif_data <- citation_data %>% select(`Article DOI (article_metadata)`, Cites, `Citation Date`, 
+                                     `Article Date of Publication (article_metadata)`) %>% 
+  filter(Cites != 0) %>% distinct()
+
 published_data <- full_join(citation_select, usage_select, by = c("Date of Publication" = "Article Date of Publication (article_metadata)", "Published Months", "Measure Names", "Measure Values", "Article DOI (article_metadata)"))
+
+jif_report_data <- manu_data %>% 
+  filter(!is.na(doi)) %>% 
+  select(doi, manuscript.type, journal) %>% 
+  left_join(., jif_data, by = c("doi" = "Article DOI (article_metadata)")) %>% distinct()
 
 report_data <- left_join(manu_data, published_data, by = c("doi" = "Article DOI (article_metadata)"))
 
