@@ -1,6 +1,7 @@
 monthly_report_examples/
 processed_data/
 reports/
+ejp_transfer*
 monthly_report.Rmd
 monthly_report.nb.html
 monthly_report_cache
