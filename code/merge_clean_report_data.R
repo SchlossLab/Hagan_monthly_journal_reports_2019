@@ -21,6 +21,7 @@ replace_special <- function(x){  #function to replace special characters with st
 #Load datsets----
 manu_data <- report_parse %>% 
   mutate(doi = tolower(doi)) %>% select(-related.manu, -is.resubmission) %>% 
+  filter(manuscript.number != "NA") %>% 
   filter(journal != "EC") %>% filter(journal != "genomeA") %>% filter(journal != "CVI")
   
 #people_data <- read_csv("processed_data/2018_people.csv") %>% 
@@ -30,22 +31,26 @@ manu_data <- report_parse %>%
 
 #review_data <- read_csv("processed_data/2018_reviews.csv")
 
-usage_files <- list.files("processed_data/usage", full.names = TRUE) #new method will have single dataset -- change to reflect 
+usage_data <-  read_csv("processed_data/usage.csv")
 
-usage_data <- map_df(usage_files, read_csv)
+usage_select <- usage_data %>% select(`Article Date of Publication (article_metadata)`, `Article DOI (article_metadata)`, 
+                                      `Total Abstract`, `Total HTML`, `Total PDF`)
 
-usage_select <- usage_data %>% select(`Article Date of Publication (article_metadata)`, `Article DOI (article_metadata)`, `Measure Names`,
-                                      `Measure Values`, `Published Months`)
+citation_data <- read_csv("processed_data/cites.csv")
 
-citation_data <- read_csv("processed_data/HAT-Articles_data (3).csv")
-
-citation_select <- citation_data %>% select(`Article DOI (article_metadata)`, `Date of Publication`, `Measure Names`, `Measure Values`, `Published Months`)
+citation_select <- citation_data %>% select(`Article DOI (article_metadata)`, `Article Date of Publication (article_metadata)`, 
+                                            Cites, `Citation Date`, `Published Months`) %>% 
+  filter(Cites != 0) %>%
+  group_by(`Article DOI (article_metadata)`, `Article Date of Publication (article_metadata)`, `Published Months`) %>% 
+  summarise(Cites = n())
 
 jif_data <- citation_data %>% select(`Article DOI (article_metadata)`, Cites, `Citation Date`, 
                                      `Article Date of Publication (article_metadata)`) %>% 
   filter(Cites != 0) %>% distinct()
 
-published_data <- full_join(citation_select, usage_select, by = c("Date of Publication" = "Article Date of Publication (article_metadata)", "Published Months", "Measure Names", "Measure Values", "Article DOI (article_metadata)"))
+published_data <- full_join(citation_select, usage_select, 
+                            by = c("Article Date of Publication (article_metadata)", 
+                                   "Article DOI (article_metadata)")) %>% distinct()
 
 jif_report_data <- manu_data %>% 
   filter(!is.na(doi)) %>% 
@@ -54,18 +59,18 @@ jif_report_data <- manu_data %>%
 
 report_data <- left_join(manu_data, published_data, by = c("doi" = "Article DOI (article_metadata)"))
 
-report_data <- rename(report_data, "editor.id" = "person.id.x", "reviewer.id" = "person.id.y") #not sure what to do here
-
 #clean merged datasets-----
 report_data_ed <- report_data %>% unite(., Editor, first.name, last.name, sep = " ") %>% 
   mutate(Editor = map(Editor, replace_special))
 
 clean_report_data <- report_data_ed %>% 
-  select(-middle.name) %>% 
+  #select(-middle.name) %>% 
   mutate(Editor = unlist(Editor)) %>% 
-  mutate(`Date of Publication` = mdy(`Date of Publication`)) %>% 
-  rename(., "editor" = "Editor", "publication.date" = "Date of Publication", "measure.names" = "Measure Names",
-         "measure.values" = "Measure Values", "months.published" = "Published Months", "ejp.decision" = "EJP.decision")
+  mutate(`Article Date of Publication (article_metadata)` = mdy(`Article Date of Publication (article_metadata)`)) %>% 
+  rename(., "editor" = "Editor", "publication.date" = "Article Date of Publication (article_metadata)", 
+         "months.published" = "Published Months", "ejp.decision" = "EJP.decision", "Total Article Cites"= "Cites",
+         "Abstract" = "Total Abstract", "HTML" = "Total HTML", "PDF" = "Total PDF") %>% 
+  gather(`Total Article Cites`:PDF, key = measure.names, value = measure.values)
 
 write_csv(report_data, paste0("processed_data/report_data", this_ym,".csv"))
 
