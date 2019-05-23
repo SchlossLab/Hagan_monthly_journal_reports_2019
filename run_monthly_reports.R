@@ -36,9 +36,7 @@ rmarkdown::render('code/monthly_report.Rmd',  # file 2
 
 # for each journal in the data create a report
 # these reports are saved in output_dir with the name specified by output_file
-journals_list <- data %>% filter(journal != "genomeA") %>% pull(journal) %>% unique()
-
-journals_list <- c("MCB")
+journals_list <- data %>% pull(journal) %>% unique()
 
 for (each_journal in journals_list){
   rmarkdown::render('code/each_journal_report.Rmd',  # file 2
