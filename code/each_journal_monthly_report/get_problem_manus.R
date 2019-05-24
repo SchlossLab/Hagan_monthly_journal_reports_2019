@@ -7,4 +7,4 @@ problem_data <- data %>%
   filter(status == "Waiting for Revision") %>% 
   filter(decision.date >= days(90)) %>% 
   mutate(days.since.decision = as.duration(ymd_hms(decision.date) %--% today())/ddays(1)) %>% 
-  select(manuscript.number, Editor, approved.date, decision.date, days.since.decision, status)
+  select(manuscript.number, editor, approved.date, decision.date, days.since.decision, status)
