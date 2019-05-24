@@ -8,8 +8,8 @@
 subs_data <- data %>% filter(ejp.decision != "Withdrawn") %>% #remove any submissions withdrawn by the author/rejected for scope
   select(approved.date, journal, manuscript.number, version) %>% #pull needed data (uses author approved date instead of sub.date)
   filter(version == "0") %>% distinct() %>% #restrict to inital submission
-  filter(year(submitted.date) == this_year) %>% 
-  mutate(sub.month = month(submitted.date, label = TRUE)) #recode months into abbrevations
+  filter(year(approved.date) == this_year) %>% 
+  mutate(sub.month = month(approved.date, label = TRUE)) #recode months into abbrevations
 
 subs_by_journ <- subs_data %>% group_by(journal, sub.month) %>% summarise(n = n()) %>% #count subs for ea month by journal
   filter(journal != "NA") %>% #drop counts unassigned to an article
