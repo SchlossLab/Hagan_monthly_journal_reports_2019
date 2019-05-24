@@ -7,11 +7,11 @@
 #first decision excludes editorial rejections
 
 needed_data <- data %>% 
-  select(journal, submitted.date, days.to.decision, publication.date, 
+  select(journal, approved.date, days.to.decision, publication.date, 
          ejp.decision, manuscript.number, version, version.reviewed) %>%
-  separate(submitted.date, c("date.submitted", "c"), sep = " ", extra = "drop") %>% #drop hms from submitted date
-  mutate(days.to.publication = publication.date - ymd(date.submitted)) %>% #calculate days from submission to pub
-  filter(!is.na(version.reviewed) & ejp.decision != "Reject") %>% #exclude editorial rejections
+  separate(approved.date, c("date.submitted", "c"), sep = " ", extra = "drop") %>% #drop hms from submitted date
+  mutate(days.to.publication = publication.date - ymd(date.submitted)) %>%#calculate days from submission to pub 
+  filter(!is.na(version.reviewed) & ejp.decision != "Reject") %>% nrow()#exclude editorial rejections
   filter_12_mo(., ymd(.$date.submitted)) #restrict to manuscripts submitted within the last 12 months
   
 #calculate median & mean days to first decision
