@@ -57,6 +57,8 @@ jif_report_data <- manu_data %>%
   select(doi, manuscript.type, journal) %>% 
   left_join(., jif_data, by = c("doi" = "Article DOI (article_metadata)")) %>% distinct()
 
+write_csv(jif_report_data, paste0("processed_data/jif_report_data", this_ym, ".csv"))
+
 report_data <- left_join(manu_data, published_data, by = c("doi" = "Article DOI (article_metadata)"))
 
 #clean merged datasets-----
@@ -67,10 +69,11 @@ clean_report_data <- report_data_ed %>%
   #select(-middle.name) %>% 
   mutate(Editor = unlist(Editor)) %>% 
   mutate(`Article Date of Publication (article_metadata)` = mdy(`Article Date of Publication (article_metadata)`)) %>% 
-  rename(., "editor" = "Editor", "publication.date" = "Article Date of Publication (article_metadata)", 
-         "months.published" = "Published Months", "ejp.decision" = "EJP.decision", "Total Article Cites"= "Cites",
+  rename(., "editor" = "Editor", "ejp.decision" = "EJP.decision", 
+         "publication.date" = "Article Date of Publication (article_metadata)", 
+         "months.published" = "Published Months", "Total Article Cites"= "Cites",
          "Abstract" = "Total Abstract", "HTML" = "Total HTML", "PDF" = "Total PDF") %>% 
   gather(`Total Article Cites`:PDF, key = measure.names, value = measure.values)
 
-write_csv(report_data, paste0("processed_data/report_data", this_ym,".csv"))
+write_csv(clean_report_data, paste0("processed_data/report_data", this_ym,".csv"))
 
