@@ -26,12 +26,13 @@ plot_trans <- all_trans %>%
   ggplot()+
   geom_col(aes(x = journal, y = n, fill = transfer))+
   facet_wrap(~transfer)+
+  coord_flip()+
   labs(x = "Journal", y = "Number of Transfers", 
        caption = "All transfers occuring in this calendar year")+
   my_theme_horiz
 
 #What percentage of transfers accepted in the previous year
 all_transfers_ytd <- all_transfer_data %>% 
-  filter(EJP.decision == "Reject" | EJP.decision == "Accept, no revision") %>% 
-  group_by(EJP.decision) %>% summarise(n = n()) %>% 
+  filter(ejp.decision == "Reject" | ejp.decision == "Accept, no revision") %>% 
+  group_by(ejp.decision) %>% summarise(n = n()) %>% 
   mutate(prop = get_percent(n, sum(n)))
