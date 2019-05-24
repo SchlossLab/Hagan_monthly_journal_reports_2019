@@ -1,5 +1,8 @@
 #estimated jif
 
+jif_report_data <- read_csv(paste0("../processed_data/jif_report_data", this_ym, ".csv")) %>% 
+  filter(doi != "na")
+
 calc_jif_data <- jif_report_data %>% 
   #filter(journal == this_journal) %>% #specify journal
   mutate(citation.date = mdy(`Citation Date`),
@@ -21,8 +24,9 @@ citable_items <- c("AAM Contribution-Observation", "AAM Contribution-Research Ar
                    "Research Article", "Resource Report", "Review", "Short Form", "Short-Form Paper")
 
 citable_count <- calc_jif_data %>% filter(manuscript.type %in% citable_items) %>% 
+  select(journal, doi) %>% distinct() %>% 
   group_by(journal) %>% summarise(citable.count = n())
 
 est_jif <- left_join(total_cites, citable_count, by = "journal") %>% 
   filter(!is.na(citable.count)) %>% 
-  mutate(est.jif = total.cites/citable.count)
+  mutate(est.jif = round(total.cites/citable.count, digits = 2))
