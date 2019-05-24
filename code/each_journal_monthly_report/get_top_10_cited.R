@@ -7,5 +7,13 @@ top_cited_data <- data %>% filter_12_to_36_mo(., .$publication.date) %>%
   select(editor, doi, publication.date, manuscript.type, category, measure.names, measure.values) %>% 
   distinct() %>% select(-measure.names)
 
-top_cited_summary <- top_cited_data %>% arrange(desc(measure.values)) %>% 
-  head(n = 10)
+top_cited_url <- top_cited_data %>% arrange(desc(measure.values)) %>% 
+  head(n = 10) %>% 
+  mutate(url = paste0("https://www.dx.doi.org/", doi)) %>% 
+  pull(url)
+
+top_cited_summary <- top_cited_data %>% 
+  arrange(desc(measure.values)) %>% 
+  select(-doi) %>% 
+  head(n = 10) %>% 
+  mutate(title = cell_spec(row.names(.), "html", link = top_cited_url))
