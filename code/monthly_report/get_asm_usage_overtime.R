@@ -5,7 +5,8 @@ drop.measure.names <- c("Measure By", "Article Cites / Month", "Published Months
 stats_data <- data %>% 
   filter_12_mo(., .$publication.date) %>% #published in last 12 months
   filter(!(measure.names %in% drop.measure.names)) %>% 
-  mutate(measure.values.per.month = measure.values/months.published) %>% 
+  mutate(measure.values.per.month = measure.values/months.published,
+         measure.values.per.k = measure.values/1000) %>% 
   mutate(category = fct_collapse(category,
                                  "Antimicrobials" = c("Antibacterial and antifungal agents",
                                                       "Antiviral agents", "Antiviral Agents",
@@ -96,14 +97,13 @@ stats_data <- data %>%
 
 asm_time <- stats_data %>% 
   group_by(journal, floor_date(ymd(publication.date), unit = "month"), measure.names) %>% 
-  summarise(total.views = sum(measure.values)) %>% 
-  #filter(measure.names == "PDF") %>% 
+  summarise(total.views = sum(measure.values.per.k)) %>% 
   ggplot()+
   geom_line(aes(x=`floor_date(ymd(publication.date), unit = "month")`, y=total.views, color = measure.names, group = measure.names))+
   facet_wrap( ~ journal, scales = "free_y", shrink = TRUE,
               strip.position = "right", ncol = 1)+
   labs(x = "Month of Publication",
-       y = "Views",
+       y = "Views (per 1000)",
        title = "Total Article Views by Journal",
        subtitle = "For articles published in the last 12 months",
        color = "Measures")+
@@ -112,47 +112,50 @@ asm_time <- stats_data %>%
 pdf_cat <- stats_data %>% 
   filter(measure.names == "PDF") %>% 
   group_by(category, floor_date(ymd(publication.date), unit = "month"), measure.names) %>% 
-  summarise(total.views = sum(measure.values)) %>% 
+  summarise(total.views = sum(measure.values.per.k)) %>% 
   ggplot()+
   geom_line(aes(x=`floor_date(ymd(publication.date), unit = "month")`, y=total.views, group = category))+
   #coord_cartesian(ylim = c(0,5000))+
   facet_wrap( ~ category,  
               strip.position = "right", ncol = 4, labeller = label_wrap_gen(width = 13))+
   labs(x = "Month of Publication",
-       y = "PDF Views",
+       y = "PDF Views (per 1000)",
        title = "PDF Views by Category",
        subtitle = "For articles published in the last 12 months",
-       caption = "NA category = All mBio & MCB publications, plus assorted items from AAC, AEM, JB, JCM, JVI, mSphere, & mSystems")+
+       caption = "NA category = All mBio & MCB publications, plus assorted items from 
+                  AAC, AEM, JB, JCM, JVI, mSphere, & mSystems")+
   my_theme
 
 html_cat <- stats_data %>% 
   filter(measure.names == "HTML") %>% 
   group_by(category, floor_date(ymd(publication.date), unit = "month"), measure.names) %>% 
-  summarise(total.views = sum(measure.values)) %>% 
+  summarise(total.views = sum(measure.values.per.k)) %>% 
   ggplot()+
   geom_line(aes(x=`floor_date(ymd(publication.date), unit = "month")`, y=total.views, group = category))+
   #coord_cartesian(ylim = c(0,5000))+
   facet_wrap( ~ category, ncol = 4,  
               strip.position = "right", labeller = label_wrap_gen(width = 13))+
   labs(x = "Month of Publication",
-       y = "HTML Views",
+       y = "HTML Views (per 1000)",
        title = "HTML Views by Category",
        subtitle = "For articles published in the last 12 months",
-       caption = "NA category = All mBio & MCB publications, plus assorted items from AAC, AEM, JB, JCM, JVI, mSphere, & mSystems")+
+       caption = "NA category = All mBio & MCB publications, plus assorted items from 
+                  AAC, AEM, JB, JCM, JVI, mSphere, & mSystems")+
   my_theme
 
 abstract_cat <- stats_data %>% 
   filter(measure.names == "Abstract") %>% 
   group_by(category, floor_date(ymd(publication.date), unit = "month"), measure.names) %>% 
-  summarise(total.views = sum(measure.values)) %>% 
+  summarise(total.views = sum(measure.values.per.k)) %>% 
   ggplot()+
   geom_line(aes(x=`floor_date(ymd(publication.date), unit = "month")`, y=total.views, group = category))+
   #coord_cartesian(ylim = c(0,10000))+
   facet_wrap( ~ category, ncol = 4, 
               strip.position = "right", labeller = label_wrap_gen(width = 13))+
   labs(x = "Month of Publication",
-       y = "Abstract Views",
+       y = "Abstract Views (per 1000)",
        title = "Abstract Views by Category",
        subtitle = "For articles published in the last 12 months",
-       caption = "NA category = All mBio & MCB publications, plus assorted items from AAC, AEM, JB, JCM, JVI, mSphere, & mSystems")+
+       caption = "NA category = All mBio & MCB publications, plus assorted items from 
+                  AAC, AEM, JB, JCM, JVI, mSphere, & mSystems")+
   my_theme
