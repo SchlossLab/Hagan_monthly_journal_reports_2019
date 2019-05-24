@@ -2,7 +2,9 @@ library(tidyverse)
 library(lubridate)
 
 data <- read_csv(paste0("processed_data/report_data", this_ym,".csv")) %>% 
-  filter(journal != "EC") %>% filter(journal != "genomeA") %>% filter(journal != "CVI")
+  filter(journal != "EC") %>% filter(journal != "genomeA") %>% filter(journal != "CVI") %>% 
+  filter(floor_date(ymd_hms(approved.date), "month") != floor_date(today(), "month")) %>% 
+  filter(floor_date(ymd_hms(approved.date), "month") >= floor_date(today(), "month") - ((years(4)+months(1)))) 
 
 this_year <- today() %>% year()
 
