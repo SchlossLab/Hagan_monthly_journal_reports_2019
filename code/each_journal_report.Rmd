@@ -3,9 +3,17 @@ title: '`r format(paste(each_journal, "Monthly Report"))`'
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: html_document
 ---
+<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.5/css/jquery.dataTables.min.css">
+<script src="http://code.jquery.com/jquery-2.1.2.min.js"></script>
+<script src="http://cdn.datatables.net/1.10.5/js/jquery.dataTables.min.js"></script>
 
+<script type="text/javascript">
+         $(document).ready(function() {
+             $("table").DataTable();
+         } );
+</script>
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
 this_journal <- each_journal #sets the journal for the report
 
@@ -51,7 +59,9 @@ cat_views
 ```{r, top_10_read}
 source("each_journal_monthly_report/get_top_10_read.R")
 
-knitr::kable(top_summary, format = "html", digits = 2,  col.names = c("Editor", "DOI", "Publication Date", "Manuscript Type", "Category", "Total Reads")) %>%
+knitr::kable(top_summary, format = "html", digits = 2,  escape = FALSE, 
+             col.names = c("Editor", "Title", "Publication Date", "Manuscript Type", 
+                           "Category", "Total Reads")) %>%
   footnote(general = "Selected from articles published in the last 12 months, ranked on HighWire html & pdf views") %>% 
   kable_styling()
 ```
@@ -68,7 +78,8 @@ each_cite
 ```{r, top_10_cited}
 source("each_journal_monthly_report/get_top_10_cited.R")
 
-knitr::kable(top_cited_summary, format = "html", digits = 2,  col.names = c("Editor", "DOI", "Publication Date", "Manuscript Type", "Category", "Total Cites")) %>%
+knitr::kable(top_cited_summary, format = "html", digits = 2,  escape = FALSE,
+             col.names = c("Editor", "Title", "Publication Date", "Manuscript Type", "Category", "Total Cites")) %>%
   footnote(general = "Selected from articles published in the last 12 months") %>% 
   kable_styling()
 ```
@@ -78,7 +89,9 @@ knitr::kable(top_cited_summary, format = "html", digits = 2,  col.names = c("Edi
 ```{r, editor_manu_type}
 source("each_journal_monthly_report/get_editor_manu_type.R")
 
-knitr::kable(article_summary, format = "html", digits = 2,  col.names = c("Manuscript Type", "Decision", "N", "%")) %>%  
+knitr::kable(article_summary, format = "html", 
+             table.attr = "class='dtable'", escape = FALSE, digits = 2,    
+             col.names = c("Manuscript Type", "Decision", "N", "%")) %>%  
   collapse_rows(1) %>% 
   footnote(general = "Includes all submissions YTD") %>% 
   kable_styling()
@@ -89,7 +102,8 @@ knitr::kable(article_summary, format = "html", digits = 2,  col.names = c("Manus
 ```{r editor_assign}
 source("each_journal_monthly_report/get_editor_assign.R") 
 
-knitr::kable(editor_assign_all_summary, format = "html", digits = 2) %>% 
+knitr::kable(editor_assign_all_summary, format = "html", 
+             table.attr = "class='dtable'", escape = FALSE, digits = 2) %>% 
   footnote(general = "Manuscripts assigned to each editor for the YTD") %>% 
   kable_styling()
 ```
@@ -98,7 +112,9 @@ knitr::kable(editor_assign_all_summary, format = "html", digits = 2) %>%
 ```{r, editor_dec}
 source("each_journal_monthly_report/get_editor_desc_days.R") 
 
-knitr::kable(editor_desc_year_sums, format = "html", digits = 2,  col.names = c("Editor", "N", "Average", "Median", "Minimum", "Maximum")) %>%
+knitr::kable(editor_desc_year_sums, format = "html", 
+             table.attr = "class='dtable'", escape = FALSE, digits = 2,  
+             col.names = c("Editor", "N", "Average", "Median", "Minimum", "Maximum")) %>%
   footnote(general = "Includes decisions made following peer review on initial submissions in the last 12 months") %>% 
   kable_styling()
 ```
@@ -108,7 +124,9 @@ knitr::kable(editor_desc_year_sums, format = "html", digits = 2,  col.names = c(
 ```{r, editor_acc_rej}
 source("each_journal_monthly_report/get_editor_acc_rej_rates.R") 
 
-knitr::kable(editor_acc_rej_summary, format = "html", digits = 2,  col.names = c("Editor", "N", "%", "N", "%", "N", "%")) %>% 
+knitr::kable(editor_acc_rej_summary, format = "html", 
+             table.attr = "class='dtable'", escape = FALSE, digits = 2,  
+             col.names = c("Editor", "N", "%", "N", "%", "N", "%")) %>% 
   add_header_above(c(" ", "Editorial Rejections" = 2, "Rejected" = 2, "Accepted" = 2)) %>% 
   footnote(general = "Includes all decisions made in the last 12 months") %>% 
   kable_styling()

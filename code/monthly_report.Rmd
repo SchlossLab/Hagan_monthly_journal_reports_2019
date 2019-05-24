@@ -5,9 +5,17 @@ output:
   html_document:
     df_print: paged
 ---
+<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.5/css/jquery.dataTables.min.css">
+<script src="http://code.jquery.com/jquery-2.1.2.min.js"></script>
+<script src="http://cdn.datatables.net/1.10.5/js/jquery.dataTables.min.js"></script>
 
+<script type="text/javascript">
+         $(document).ready(function() {
+             $("table").DataTable();
+         } );
+</script>
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
 ```
 
@@ -22,7 +30,8 @@ asm_subs_plot
 ```{r, subs_table}
 source("monthly_report/get_subs.R")
 
-knitr::kable(sum_month, format = "html", digits = 2) %>% 
+knitr::kable(sum_month, format = "html", 
+             table.attr = "class='dtable'", escape = FALSE, digits = 2) %>% 
   footnote(general = "Submissions recieved by each journal for this calendar year") %>% 
   kable_styling()
 ```
@@ -41,7 +50,9 @@ knitr::kable(day_summary, format = "html", digits = 2, col.names = c("Journal", 
 ```{r, acc_rej_rates, results='asis'}
 source("monthly_report/get_acc_rej_rates.R")
 
-knitr::kable(acc_rej_summary, format = "html", digits = 2, col.names = c("Journal", "N", "%", "N", "%", "N", "%")) %>%
+knitr::kable(acc_rej_summary, format = "html", 
+             table.attr = "class='dtable'", escape = FALSE, digits = 2,  
+             col.names = c("Journal", "N", "%", "N", "%", "N", "%")) %>%
   add_header_above(c(" ", "Editorial Rejections" = 2, "Rejections" = 2, "Accepted" = 2)) %>% 
   footnote(general = "Includes all manuscripts with a decision made in the last 12 months") %>% 
   kable_styling()
@@ -52,7 +63,8 @@ knitr::kable(acc_rej_summary, format = "html", digits = 2, col.names = c("Journa
 source("monthly_report/get_transfer_journals.R")
 plot_trans
 
-knitr::kable(all_transfers_ytd, format = "html", digits = 2, col.names = c("Decision", "N", "%")) %>%
+knitr::kable(all_transfers_ytd, format = "html", digits = 2, 
+             col.names = c("Decision", "N", "%")) %>%
   footnote(general = "Includes all manuscripts transfered in this calendar year") %>% 
   kable_styling()
 ```
@@ -67,7 +79,7 @@ pdf_plot
 ```
 
 
-```{r, asm_usage_overtime,  fig.height = 10, fig.width= 8}
+```{r, asm_usage_overtime, fig.height = 10, fig.width= 8}
 source("monthly_report/get_asm_usage_overtime.R")
 
 asm_time
@@ -77,8 +89,8 @@ abstract_cat
 ```
 
 
-#Total Cites for Articles Published in Last 12 Months
-```{r, asm_cites_journ}
+#Total Cites for Articles Published in Previous 12 - 36 Months
+```{r, asm_cites_journ, fig.height = 6, fig.width= 8}
 source("monthly_report/get_asm_cites_journ.R")
 
 journal_cites_plot
@@ -89,7 +101,9 @@ cat_cites_plot
 ```{r, est_jifs}
 source("monthly_report/get_est_jif.R")
 
-knitr::kable(est_jif, format = "html", digits = 2, col.names = c("Journal", "Total Cites", 
+knitr::kable(est_jif, format = "html", 
+             table.attr = "class='dtable'", escape = FALSE, digits = 2,
+             col.names = c("Journal", "Total Cites", 
                                                                  "Citable Items", "Impact Factor")) %>%
   footnote(general = "Rolling impact factor calculated from citations over the last 12-24 months on 
            publications 24 to 48 months old") %>% 
