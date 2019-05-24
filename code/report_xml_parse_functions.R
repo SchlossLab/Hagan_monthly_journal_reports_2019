@@ -85,6 +85,13 @@ parse_xml <- function(input_xmltop){
   decision_date <- get_column(input_xmltop, "//version/decision-date", "decision.date") #version decision date
   decision <- get_column(input_xmltop, "//version/ejp-decision", "EJP.decision") #final decision
   
+  #reviwer specific data
+  reviewer_id <- get_column(input_xmltop, "//referee-person-id", "reviewer.id") #all listed reviewers
+  reviewer_recommendation <- get_column(input_xmltop, "//referee-recommendation", "review.recommendation") #all reviewer recs
+  reviewer_start <- get_column(input_xmltop, "//referee-started-date", "review.start") #review start date
+  reviewer_return <- get_column(input_xmltop, "//referee-received-date", "review.return") #review completed date
+  reviewer_score <- get_column(input_xmltop, "//referee-rank", "review.score") #reviewer scores of manuscript
+  
   #Manuscript metadata - included in every version, but probably doesn't change, use head to get first entry
   related_manu <- get_column(input_xmltop, "//related-manuscript-number-from", "related.manu") %>% head(n =1) #previous manu
   category <- get_column(input_xmltop, "//category", "category") %>% head(n =1) #research category
@@ -100,7 +107,13 @@ parse_xml <- function(input_xmltop){
   #join version data
   version_meta <- cbind(data.frame(manu_number, stringsAsFactors = FALSE), #use manuscript number as unqiue identifier
                         version, approved_date, submitted_date, decision_date, decision, stringsAsFactors = FALSE) %>% 
-    mutate(days.to.decision = as.duration(ymd_hms(submitted.date) %--% ymd_hms(decision.date))/ddays(1))#calculate days to make decision for each version
+    mutate(days.to.decision = as.duration(ymd_hms(submitted.date) %--% ymd_hms(decision.date))/ddays(1)) #calculate days to make decision for each version
+
+  #join referee data
+  review_outcome <- cbind(data.frame(manu_number, stringsAsFactors = FALSE), #manu number as common identifier
+                          reviewer_id, reviewer_recommendation, reviewer_start, reviewer_return, reviewer_score, stringsAsFactors = FALSE) %>% 
+    mutate(days.to.review = as.duration(ymd_hms(review.start) %--% ymd_hms(review.return))/ddays(1), #calc how long review took
+           version.reviewed = assign_version(review.return, version_meta)) #associate review decision with correct version
   
   #transfer data
   transfers <- get_column(input_xmltop, "//transfers/transfer", "transfer.journal")#scrapes all nodes in person and returns as df
@@ -113,7 +126,7 @@ parse_xml <- function(input_xmltop){
                      published_online_date, journal_title, open_access, status)
   
   #full join of manuscript meta data & decisions
-  manu_data <- list(version_meta, manu_meta, transfer_data, people) %>% #list all dfs
+  manu_data <- list(version_meta, manu_meta, transfer_data, people, review_outcome) %>% #list all dfs
     reduce(full_join, by = "manuscript.number") %>% #join by manuscript identifier
     rename("editor.id" = "person.id", "number.authors" = "number_authors")
   
