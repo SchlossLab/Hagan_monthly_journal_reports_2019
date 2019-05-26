@@ -16,4 +16,5 @@ top_url <- top_data %>% arrange(desc(total_reads)) %>%
 
 top_summary <- top_data %>% arrange(desc(total_reads)) %>% 
   select(-HTML, -PDF, -doi) %>% head(n = 10) %>% 
-  mutate(title = cell_spec(row.names(.), "html", link = top_url))
+  mutate(title = str_to_title(title)) %>% 
+  mutate(title = cell_spec(title, "html", link = top_url))
