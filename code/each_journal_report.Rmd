@@ -17,6 +17,9 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
 this_journal <- each_journal #sets the journal for the report
 
+n_stats <- data %>% filter(journal == this_journal) %>% 
+  filter(!is.na(measure.values)) %>% nrow()
+
 no_cat_journ <- c("mBio", "MCB") #journals that don't use the category field
 ```
 
@@ -27,7 +30,7 @@ source("each_journal_monthly_report/get_journ_subs.R")
 sub_trends_plot
 ```
 
-```{r, journ_subs_cat, fig.length = 12, fig.width=8}
+```{r, journ_subs_cat, fig.length = 12, fig.width=8, results='asis'}
 source("each_journal_monthly_report/get_journ_subs.R")
 
 plot_YTD_subs
@@ -37,51 +40,56 @@ plot_YTD_subs
 ```{r, recent_transfers}
 source("each_journal_monthly_report/get_transfers.R")
 
-knitr::kable(J_recent_transfers, format = "html", digits = 2,  col.names = c("Date", "From", "Manuscript Number", "Title", "Editor", "Decision")) %>%
-  footnote(general = "Transfers received in the last month") %>% 
+knitr::kable(J_recent_transfers, caption = "Transfers received in the last month",
+             format = "html", digits = 2,  col.names = c("Date", "From", "Manuscript Number", "Title", "Editor", "Decision")) %>%
   kable_styling()
 
-knitr::kable(J_transfers_ytd, format = "html", digits = 2,  col.names = c("Decision", "N", "Percent")) %>%
-  footnote(general = "Final outcomes on transfers recieved in the last 12 months") %>% 
+knitr::kable(J_transfers_ytd, 
+             caption = "Final outcomes on transfers recieved in the last 12 months",
+             format = "html", digits = 2,  col.names = c("Decision", "N", "Percent")) %>%
   kable_styling()
 ```
 
 #Useage Stats
 ```{r, journ_usage_barplot, fig.width= 8}
+if(n_stats != 0){
 source("each_journal_monthly_report/get_journ_usage.R")
 
 total_views
 date_views
-cat_views
+cat_views}
 ```
 
 #10 most-frequently read articles
 ```{r, top_10_read}
-source("each_journal_monthly_report/get_top_10_read.R")
+if(n_stats != 0){source("each_journal_monthly_report/get_top_10_read.R")
 
 knitr::kable(top_summary, format = "html", digits = 2,  escape = FALSE, 
              col.names = c("Editor", "Title", "Publication Date", "Manuscript Type", 
                            "Category", "Total Reads")) %>%
   footnote(general = "Selected from articles published in the last 12 months, ranked on HighWire html & pdf views") %>% 
-  kable_styling()
+  kable_styling() %>% 
+  scroll_box(width = "100%", height = "300px")}
 ```
 
 #Citations by category
 ```{r, journ_cites_category, fig.width= 8}
-source("each_journal_monthly_report/get_journ_cites.R")
+if(n_stats != 0){source("each_journal_monthly_report/get_journ_cites.R")
 
 total_cites
-each_cite
+each_cite}
 ```
 
 #10 most-frequently cited articles
 ```{r, top_10_cited}
-source("each_journal_monthly_report/get_top_10_cited.R")
+if(n_stats != 0){source("each_journal_monthly_report/get_top_10_cited.R")
 
-knitr::kable(top_cited_summary, format = "html", digits = 2,  escape = FALSE,
+knitr::kable(top_cited_summary, format = "html", table.attr = "class='dtable'", 
+             digits = 2,  escape = FALSE,
              col.names = c("Editor", "Title", "Publication Date", "Manuscript Type", "Category", "Total Cites")) %>%
   footnote(general = "Selected from articles published in the last 12 months") %>% 
-  kable_styling()
+  kable_styling() %>% 
+  scroll_box(width = "100%", height = "300px")}
 ```
 
 
@@ -105,7 +113,8 @@ source("each_journal_monthly_report/get_editor_assign.R")
 knitr::kable(editor_assign_all_summary, format = "html", 
              table.attr = "class='dtable'", escape = FALSE, digits = 2) %>% 
   footnote(general = "Manuscripts assigned to each editor for the YTD") %>% 
-  kable_styling()
+  kable_styling() %>% 
+  scroll_box(width = "100%", height = "300px")
 ```
 
 #Days to first decision by editor
@@ -116,7 +125,8 @@ knitr::kable(editor_desc_year_sums, format = "html",
              table.attr = "class='dtable'", escape = FALSE, digits = 2,  
              col.names = c("Editor", "N", "Average", "Median", "Minimum", "Maximum")) %>%
   footnote(general = "Includes decisions made following peer review on initial submissions in the last 12 months") %>% 
-  kable_styling()
+  kable_styling() %>% 
+  scroll_box(width = "100%", height = "300px")
 ```
 
 
@@ -129,7 +139,8 @@ knitr::kable(editor_acc_rej_summary, format = "html",
              col.names = c("Editor", "N", "%", "N", "%", "N", "%")) %>% 
   add_header_above(c(" ", "Editorial Rejections" = 2, "Rejected" = 2, "Accepted" = 2)) %>% 
   footnote(general = "Includes all decisions made in the last 12 months") %>% 
-  kable_styling()
+  kable_styling() %>% 
+  scroll_box(width = "100%", height = "300px")
 ```
 
 
