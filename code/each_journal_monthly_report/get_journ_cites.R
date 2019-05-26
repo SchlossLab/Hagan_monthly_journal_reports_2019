@@ -3,7 +3,7 @@
 
 journ_cites_data <- data %>% filter(journal == this_journal) %>% 
   filter_12_to_36_mo(., .$publication.date) %>% 
-  filter(measure.names == "Total Article Cites")
+  filter(measure.names == "Total Article Cites") 
 
 total_cites <- if(this_journal %in% no_cat_journ){
   journ_cites_data %>% 

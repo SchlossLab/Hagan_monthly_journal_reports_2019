@@ -11,7 +11,7 @@ needed_data <- data %>%
          ejp.decision, manuscript.number, version, version.reviewed) %>%
   separate(approved.date, c("date.submitted", "c"), sep = " ", extra = "drop") %>% #drop hms from submitted date
   mutate(days.to.publication = publication.date - ymd(date.submitted)) %>%#calculate days from submission to pub 
-  filter(!is.na(version.reviewed) & ejp.decision != "Reject") %>% nrow()#exclude editorial rejections
+  filter(!is.na(version.reviewed) & ejp.decision != "Reject") %>% #exclude editorial rejections
   filter_12_mo(., ymd(.$date.submitted)) #restrict to manuscripts submitted within the last 12 months
   
 #calculate median & mean days to first decision

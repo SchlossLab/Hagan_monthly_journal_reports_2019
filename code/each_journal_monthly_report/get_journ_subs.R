@@ -2,7 +2,7 @@
 
 journ_subs_data <- data %>% filter(journal == this_journal) %>% 
   filter(ejp.decision != "Withdrawn") %>% 
-  filter(year(approved.date) >= (this_year - 5))
+  filter(year(approved.date) >= (this_year - 3))
 
 total_years <- year(journ_subs_data$approved.date) %>% unique() %>% length()
 
