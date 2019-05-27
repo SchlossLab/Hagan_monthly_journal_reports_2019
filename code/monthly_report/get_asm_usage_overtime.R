@@ -103,7 +103,7 @@ asm_time <- stats_data %>%
   facet_wrap( ~ journal, scales = "free_y", shrink = TRUE,
               strip.position = "right", ncol = 1)+
   labs(x = "Month of Publication",
-       y = "Views (per 1000)",
+       y = "Views (x1000)",
        title = "Total Article Views by Journal",
        subtitle = "For articles published in the last 12 months",
        color = "Measures")+
@@ -119,7 +119,7 @@ pdf_cat <- stats_data %>%
   facet_wrap( ~ category,  
               strip.position = "right", ncol = 4, labeller = label_wrap_gen(width = 13))+
   labs(x = "Month of Publication",
-       y = "PDF Views (per 1000)",
+       y = "PDF Views (x1000)",
        title = "PDF Views by Category",
        subtitle = "For articles published in the last 12 months",
        caption = "NA category = All mBio & MCB publications, plus assorted items from 
@@ -136,7 +136,7 @@ html_cat <- stats_data %>%
   facet_wrap( ~ category, ncol = 4,  
               strip.position = "right", labeller = label_wrap_gen(width = 13))+
   labs(x = "Month of Publication",
-       y = "HTML Views (per 1000)",
+       y = "HTML Views (x1000)",
        title = "HTML Views by Category",
        subtitle = "For articles published in the last 12 months",
        caption = "NA category = All mBio & MCB publications, plus assorted items from 
@@ -153,7 +153,7 @@ abstract_cat <- stats_data %>%
   facet_wrap( ~ category, ncol = 4, 
               strip.position = "right", labeller = label_wrap_gen(width = 13))+
   labs(x = "Month of Publication",
-       y = "Abstract Views (per 1000)",
+       y = "Abstract Views (x1000)",
        title = "Abstract Views by Category",
        subtitle = "For articles published in the last 12 months",
        caption = "NA category = All mBio & MCB publications, plus assorted items from 

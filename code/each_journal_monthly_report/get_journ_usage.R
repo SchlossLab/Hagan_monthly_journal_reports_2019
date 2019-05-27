@@ -3,7 +3,8 @@
 journ_usage_data <- data %>% filter(journal == this_journal) %>% 
   filter_12_mo(., .$publication.date) %>% 
   filter(measure.names == "Abstract" | measure.names == "HTML" | measure.names == "PDF") %>% 
-  mutate(measure.values.per.k = measure.values/100)
+  mutate(measure.values.per.k = measure.values/100) %>% 
+  mutate(category = strtrim(category, 45))
 
 total_views <- journ_usage_data %>% 
   group_by(measure.names) %>% 

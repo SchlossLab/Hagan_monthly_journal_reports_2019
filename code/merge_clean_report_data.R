@@ -63,11 +63,17 @@ report_data <- left_join(manu_data, published_data, by = c("doi" = "Article DOI 
 
 #clean merged datasets-----
 report_data_ed <- report_data %>% unite(., Editor, first.name, last.name, sep = " ") %>% 
-  mutate(Editor = map(Editor, replace_special))
+  mutate(Editor = map(Editor, replace_special),
+         title = map(title, replace_special),
+         category = map(category, replace_special)) %>% 
+  mutate(category = unlist(category)) %>% 
+  mutate(category = map(category, function(x){strtrim(x, 45)}))
 
 clean_report_data <- report_data_ed %>% 
   #select(-middle.name) %>% 
-  mutate(Editor = unlist(Editor)) %>% 
+  mutate(Editor = unlist(Editor),
+         title = unlist(title),
+         category = unlist(category)) %>% 
   mutate(`Article Date of Publication (article_metadata)` = mdy(`Article Date of Publication (article_metadata)`)) %>% 
   rename(., "editor" = "Editor", "ejp.decision" = "EJP.decision", 
          "publication.date" = "Article Date of Publication (article_metadata)", 

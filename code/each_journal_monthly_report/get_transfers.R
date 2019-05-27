@@ -10,7 +10,8 @@ J_transfer_data <- data %>%
 #1. how many transfers to each journal in the previous month
 J_recent_transfers <- J_transfer_data %>% 
   filter(transfer.date %within% interval(start = (today() - days(30)), end = today())) %>% 
-  select(transfer.date, transfer.from, manuscript.number, title, editor, ejp.decision)
+  select(transfer.date, transfer.from, manuscript.number, title, editor, ejp.decision) %>% 
+  distinct()
   
 #2. what percentage of transfers accepted in the previous year
 J_transfers_ytd <- J_transfer_data %>% 

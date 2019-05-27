@@ -6,16 +6,18 @@ journ_subs_data <- data %>% filter(journal == this_journal) %>%
 
 total_years <- year(journ_subs_data$approved.date) %>% unique() %>% length()
 
-sub_trends_plot <- journ_subs_data %>% 
-  group_by(year(approved.date), month(approved.date)) %>% summarise(n = n()) %>%
-  ggplot()+
-  geom_line(aes(x = `month(approved.date)`, y = n, group = as.factor(`year(approved.date)`), 
-                color = as.factor(`year(approved.date)`)))+
-  scale_color_manual(values = cbbPalette)+
+sub_trends_data <- journ_subs_data %>% 
+  group_by(year(approved.date), month(approved.date)) %>% summarise(n = n())
+
+sub_trends_plot <- ggplot(sub_trends_data)+
+  geom_line(aes(x = `month(approved.date)`, y = n, 
+                group = as.factor(`year(approved.date)`), 
+                linetype = as.factor(`year(approved.date)`)))+
+  scale_linetype_manual(values = c("dotted", "twodash", "longdash", "solid"))+
   scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), 
                      labels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", 
                               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))+
-  labs(x = "Month", y = "Submissions", color = "Year",
+  labs(x = "Month", y = "Submissions", linetype = "Year",
        title = "Submission Trends by Year")+
   my_theme_leg_horiz
 
