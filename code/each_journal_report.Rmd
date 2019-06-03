@@ -2,6 +2,7 @@
 title: '`r format(paste(each_journal, "Monthly Report"))`'
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: html_document
+  toc: true
 ---
 <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.5/css/jquery.dataTables.min.css">
 <script src="http://code.jquery.com/jquery-2.1.2.min.js"></script>
@@ -9,7 +10,7 @@ output: html_document
 
 <script type="text/javascript">
          $(document).ready(function() {
-             $("table").DataTable();
+             $(".dtable").DataTable();
          } );
 </script>
 ```{r setup, include=FALSE}
@@ -68,7 +69,7 @@ if(n_stats != 0){date_views}
 ```
 
 
-```{r}
+```{r, fig.height=10, fig.width=10}
 if(n_stats != 0){cat_views}
 ```
 
@@ -125,8 +126,7 @@ source("each_journal_monthly_report/get_editor_assign.R")
 knitr::kable(editor_assign_all_summary, format = "html", 
              table.attr = "class='dtable'", escape = FALSE, digits = 2) %>% 
   footnote(general = "Manuscripts assigned to each editor for the YTD") %>% 
-  kable_styling() %>% 
-  scroll_box(width = "100%", height = "300px")
+  kable_styling()
 ```
 
 #Days to first decision by editor
@@ -137,8 +137,7 @@ knitr::kable(editor_desc_year_sums, format = "html",
              table.attr = "class='dtable'", escape = FALSE, digits = 2,  
              col.names = c("Editor", "N", "Average", "Median", "Minimum", "Maximum")) %>%
   footnote(general = "Includes decisions made following peer review on initial submissions in the last 12 months") %>% 
-  kable_styling() %>% 
-  scroll_box(width = "100%", height = "300px")
+  kable_styling()
 ```
 
 
@@ -151,8 +150,7 @@ knitr::kable(editor_acc_rej_summary, format = "html",
              col.names = c("Editor", "N", "%", "N", "%", "N", "%")) %>% 
   add_header_above(c(" ", "Editorial Rejections" = 2, "Rejected" = 2, "Accepted" = 2)) %>% 
   footnote(general = "Includes all decisions made in the last 12 months") %>% 
-  kable_styling() %>% 
-  scroll_box(width = "100%", height = "300px")
+  kable_styling()
 ```
 
 

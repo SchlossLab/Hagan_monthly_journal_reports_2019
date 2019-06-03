@@ -24,7 +24,7 @@ test_list <- function(all, decision, group){
     .[. != "All"|. != "Total"]
   
   missing_df <- if(length(missing_list) == 0) paste("skip") else(
-    cbind(missing_list, as.tibble("na")) %>% #generate df of missing items w/ na value
+    cbind(missing_list, as.tibble("0")) %>% #generate df of missing items w/ na value
       setNames(., c(paste(group), colnames(decision)[2])) #rename columns (setNames allows conditional naming)
   )
   

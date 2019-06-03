@@ -84,6 +84,7 @@ cat_cites_plot <- category_cites_data %>% ggplot()+
   labs(x = "Category", y = "Article Cites",
        title = " Article Cites Based on Category",
        subtitle = "Articles published in the previous 12 to 36 months",
-       caption = "NA category = All mBio & MCB publications, plus assorted items from AAC, AEM, JB, JCM, JVI, mSphere, & mSystems")+
+       caption = "NA category = All mBio & MCB publications, plus assorted items from 
+       AAC, AEM, JB, JCM, JVI, mSphere, & mSystems")+
   coord_flip()+
   my_theme
