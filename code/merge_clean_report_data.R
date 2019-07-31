@@ -22,7 +22,7 @@ replace_special <- function(x){  #function to replace special characters with st
 manu_data <- report_parse %>% 
   mutate(doi = tolower(doi)) %>% select(-related.manu, -is.resubmission) %>% 
   filter(manuscript.number != "NA") %>% 
-  filter(journal != "EC") %>% filter(journal != "genomeA") %>% filter(journal != "CVI")
+  filter(journal != "EC") %>% filter(journal != "CVI")
   
 #people_data <- read_csv("processed_data/2018_people.csv") %>% 
 #  filter(role == "editor"|role == "senior.editor") %>% 
@@ -74,7 +74,8 @@ clean_report_data <- report_data_ed %>%
   mutate(Editor = unlist(Editor),
          title = unlist(title),
          category = unlist(category)) %>% 
-  mutate(`Article Date of Publication (article_metadata)` = mdy(`Article Date of Publication (article_metadata)`)) %>% 
+  mutate(`Article Date of Publication (article_metadata)` = mdy(`Article Date of Publication (article_metadata)`),
+         journal = if_else(journal == "genomeA", "MRA", journal)) %>% 
   rename(., "editor" = "Editor", "ejp.decision" = "EJP.decision", 
          "publication.date" = "Article Date of Publication (article_metadata)", 
          "months.published" = "Published Months", "Total Article Cites"= "Cites",
@@ -82,4 +83,3 @@ clean_report_data <- report_data_ed %>%
   gather(`Total Article Cites`:PDF, key = measure.names, value = measure.values)
 
 write_csv(clean_report_data, paste0("processed_data/report_data", this_ym,".csv"))
-
