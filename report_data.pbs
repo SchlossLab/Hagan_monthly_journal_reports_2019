@@ -2,7 +2,6 @@
 #PBS -N monthly_report
 #PBS -l nodes=1:ppn=8,mem=46gb
 #PBS -l walltime=10:00:00
-#PBS -n ${password}
 #PBS -j oe
 #PBS -m abe
 #PBS -V
@@ -15,42 +14,64 @@ pwd
 
 cd $PBS_O_WORKDIR
 
+#assumes that sftp -b ../sftp_batch ejpress has already been completed
+
+dir="ejp_transfer_$(date +'%Y_%m_%d')" #folder containing the transfer completed on today's date
+
+tempdir="ejp_transfer_temp" #temporary file placement from sftp
+
+compdir="ejp_transfer_comp" #compiled files from all transfers
+
+######################################################
+#unzip files from today's transfer
+
+mkdir $dir #create folder to contain most recent transfer
+
+cp $tempdir/*.zip $dir #copy most recent transfer zipped files to new folder
+
+cd $dir
+
+ls #confirm transfer
+
+unzip '*.zip' #unzip new files in new directory
+
+cd ../
+
 pwd
 
-#dir="ejp_transfer_$(date +'%Y_%m_%d')"
-#
-#mkdir $dir
-#
-#cd $dir
-#
-#pwd
-#
-#sftp pats@sftp.ejpress.com <<EOF
-#get *.zip .
-#exit
-#EOF
-#
-#unzip '*.zip'
-#
-#cd ../
-#
-#pwd
+######################################################
+#unencrypt & decompress previous files and merge with files from today's transfer
 
-Rscript run_monthly_reports.R
+gpg $compdir.tar.gz.gpg #unencrypt directory with all prior xml files compiled
 
-#rm $dir/*.xml
-#
-#tar czf $dir.tar.gz $dir
-#
-#gpg -c $dir.tar.gz [need to add password variable]
-#
-#[command to confirm encryption completed]
-#
-#rm $dir/*.zip $dir.tar.gz
-#
-#rmdir $dir
-#
-#ls
+tar xzf $compdir.tar.gz #decompress compiled directory
+
+cp $dir/*.xml $compdir/ #move unzipped xml files into compiled directory (updated xml files will replace old versions)
+
+pwd
+
+##################################################
+
+Rscript run_monthly_reports.R #generate monthly reports
+
+#################################################
+#encrypt compliled and standalone versions of today's transfer & delete unencrypted data
+
+tar czf $dir.tar.gz $dir #compress today's transfer
+
+gpg -c $dir.tar.gz [need to add password variable] #save today's transfer as encrypted file
+
+rm $tempdir/*.zip $dir/*.xml $dir/*.zip #delete unencrypted files from today's transfer
+
+rmdir $dir #delete today's directory
+
+tar czf $compdir.tar.gz $compdir #compress new compiled files
+
+gpg -c $compdir.tar.gz [need to add password variable] #encrypt new compiled files
+
+rm $compdir/*.xml $dir.tar.gz $compdir.tar.gz #delete remaining unencrypted data
+
+ls
 
 stat -f $PBS_JOBID
 ~                                                                               
