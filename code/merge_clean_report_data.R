@@ -75,7 +75,7 @@ clean_report_data <- report_data_ed %>%
          title = unlist(title),
          category = unlist(category)) %>% 
   mutate(`Article Date of Publication (article_metadata)` = mdy(`Article Date of Publication (article_metadata)`),
-         journal = if_else(journal == "genomeA", "MRA", journal)) %>% 
+         journal = if_else(journal == "mra", "MRA", journal)) %>% 
   rename(., "editor" = "Editor", "ejp.decision" = "EJP.decision", 
          "publication.date" = "Article Date of Publication (article_metadata)", 
          "months.published" = "Published Months", "Total Article Cites"= "Cites",
