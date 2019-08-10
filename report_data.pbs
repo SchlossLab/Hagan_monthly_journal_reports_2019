@@ -22,44 +22,50 @@ tempdir="ejp_transfer_temp" #temporary file placement from sftp
 
 compdir="ejp_transfer_comp" #compiled files from all transfers
 
+pass='cat pass'
+
 ######################################################
 #unzip files from today's transfer
 
-mkdir $dir #create folder to contain most recent transfer
+mkdir data/$dir #create folder to contain most recent transfer
 
-cp $tempdir/*.zip $dir #copy most recent transfer zipped files to new folder
+cp data/$tempdir/*.zip data/$dir #copy most recent transfer zipped files to new folder
 
-cd $dir
+cd data/$dir
 
 ls #confirm transfer
 
 unzip '*.zip' #unzip new files in new directory
 
-cd ../
+cd ../ #puts you back into the data folder
 
 pwd
 
 ######################################################
 #unencrypt & decompress previous files and merge with files from today's transfer
 
-gpg $compdir.tar.gz.gpg #unencrypt directory with all prior xml files compiled
+gpg --batch --passphrase $pass $compdir.tar.gz.gpg #unencrypt directory with all prior xml files compiled
 
 tar xzf $compdir.tar.gz #decompress compiled directory
 
 cp $dir/*.xml $compdir/ #move unzipped xml files into compiled directory (updated xml files will replace old versions)
 
+cd ../ #move back up to project root
+
 pwd
 
 ##################################################
 
-Rscript run_monthly_reports.R #generate monthly reports
+Rscript code/run_monthly_reports.R #generate monthly reports
 
 #################################################
 #encrypt compliled and standalone versions of today's transfer & delete unencrypted data
 
+cd data/
+
 tar czf $dir.tar.gz $dir #compress today's transfer
 
-gpg -c $dir.tar.gz [need to add password variable] #save today's transfer as encrypted file
+gpg -c --batch --passphrase $pass $dir.tar.gz #save today's transfer as encrypted file
 
 rm $tempdir/*.zip $dir/*.xml $dir/*.zip #delete unencrypted files from today's transfer
 
@@ -67,7 +73,7 @@ rmdir $dir #delete today's directory
 
 tar czf $compdir.tar.gz $compdir #compress new compiled files
 
-gpg -c $compdir.tar.gz [need to add password variable] #encrypt new compiled files
+gpg -c --batch --passphrase $pass $compdir.tar.gz #encrypt new compiled files
 
 rm $compdir/*.xml $dir.tar.gz $compdir.tar.gz #delete remaining unencrypted data
 
