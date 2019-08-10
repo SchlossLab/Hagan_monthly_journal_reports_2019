@@ -19,7 +19,7 @@ automate journal monthly reports
     + Download all rows as text file
 1. Manuscript metadata -- 
     + Run the following command to retrieve updated files from ejpress:
-    `sftp -b ../sftp_batch ejpress`
+    `sftp -b sftp_batch ejpress`
 
 #R Package Dependencies
 1. knitr

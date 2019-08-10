@@ -14,7 +14,7 @@ pwd
 
 cd $PBS_O_WORKDIR
 
-#assumes that sftp -b ../sftp_batch ejpress has already been completed
+#assumes that sftp -b sftp_batch ejpress has already been completed
 
 dir="ejp_transfer_$(date +'%Y_%m_%d')" #folder containing the transfer completed on today's date
 
