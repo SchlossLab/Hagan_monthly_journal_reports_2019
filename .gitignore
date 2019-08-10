@@ -5,6 +5,7 @@ ejp_transfer*/
 *.xml
 *.tar.gz
 *.gpg
+pass
 monthly_report.nb.html
 monthly_report_cache
 monthly_report_files
