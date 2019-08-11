@@ -130,7 +130,7 @@ parse_xml <- function(input_xmltop){
     reduce(full_join, by = "manuscript.number") %>% #join by manuscript identifier
     rename("editor.id" = "person.id", "number.authors" = "number_authors")
   
-  print(paste("completed", manu_number[[1]])) #status indicator for troubleshooting help
+  #print(paste("completed", manu_number[[1]])) #status indicator for troubleshooting help
   
   return(manu_data)
 }
