@@ -2,22 +2,24 @@ library(XML) #for extracting data from XML files
 library(tidyverse)
 library(lubridate) #for dealing with dates
 
-#parse XML doc & find the root node before running further parsing functions
+#function to parse XML doc & find the root node before running further parsing functions
 get_top <- function(input_XML){
   xmldoc1 <- xmlParse(input_XML) #parse
   xmltop <- xmlRoot(xmldoc1) #find rootnode - enables pulling node text
   return(xmltop)
 }  
 
-#generate a named column from scraped xml data of a single type, use tryCatch to avoid errors for blank XML nodes & return NA values instead
+#function to generate a named column from the xml data of a single type, use tryCatch to avoid errors due to missing data
 get_column <- function(input_xml, node, newname){ #input of source file, node relative path, and name for column
   column <- tryCatch(
-    setNames(xmlToDataFrame(nodes = getNodeSet(input_xml, node)), newname), #uses input to retrieve text from all nodes with the relative path & generates a df
-    error = function(e) {setNames(as.data.frame("NA"), newname)} #if nothing present, return NA value in a dataframe
+    setNames(xmlToDataFrame( #name column generated from xmlToDataFrame
+      nodes = getNodeSet(input_xml, node)), #retrieve text from all nodes with the node path & place in df
+      newname), #name for column
+    error = function(e) {setNames(as.data.frame("NA"), newname)} #return an empty column if data are absent
   )
 }
 
-#function to fill empty nodes with "NA" to maintain dataframes
+#function to fill empty nodes with "NA" to maintain dataframes when data are missing
 fill_if_null <- function(input){
   when(
     is.null(input) ~ paste("NA"),
@@ -25,7 +27,7 @@ fill_if_null <- function(input){
 }
 
 #need to assign a version to referee data/outcomes so that I can track them by revision - use dates where if review return falls between submitted & decision date then its assigned that version
-assign_version <- function(x, version_meta) {
+assign_version <- function(x, version_meta) {# date review returned, version assigned by ejp
   
   f_to_date <- function(x){
     ymd_hms(as.character(x)) #convert to characters and read as dates
@@ -44,22 +46,25 @@ assign_version <- function(x, version_meta) {
   )
 }
 
-#get the people involved in the manuscript, assign their roles, identify by manuscript number
+#extract data required for the reports from each manuscript
+#due to overlap between variable names and column names, variable names have _ & column names . as spacers
 parse_xml <- function(input_xmltop){
   
-  #Manuscript identifiers and person data, variable names have _ & column names .
-  manu_number <- get_column(input_xmltop, "//manuscript-number", "manuscript.number") %>% head(n=1)#use manuscript number as unique identifier
+  #Unique manuscript identifier
+  manu_number <- get_column(input_xmltop, "//manuscript-number", "manuscript.number") %>% head(n=1)
   
+  #person ids for editor data
   editor_id <- get_column(input_xmltop, "//editor-person-id", "person.id") #all editors assigned
   sen_editor_id <- get_column(input_xmltop, "//senior-editor-person-id", "person.id") #senior editor assigned
 
-  #person identifiers and demographic data
-  persons <- get_column(input_xmltop, "//person", "person")#scrapes all nodes in person and returns as df
-  names(persons) <- c("address", "area.of.interest", "first.name", "gender", "gender.count", "gender.probability", "institution", "last.name", "middle.name", "person.id", "title") 
+  #person identifiers and demographic data - links names to person ids
+  persons <- get_column(input_xmltop, "//person", "person")#all info for all persons
+  names(persons) <- c("address", "area.of.interest", "first.name", "gender", "gender.count", "gender.probability", "institution", "last.name", "middle.name", "person.id", "title") #assign functional names
   
-  person_data <- cbind(data.frame(manu_number), persons) %>% select(manuscript.number, first.name, last.name, person.id) #_id, first_name, middle_name) #convert into useable dataframe & add manuscript number identifier
+  person_data <- cbind(data.frame(manu_number), persons) %>% #add manuscript identifier to person data
+    select(manuscript.number, first.name, last.name, person.id) #only keep name & person id info
   
-  #pool person data & demographics by first assigning each individual a "role"
+  #pool person data by first assigning each individual a "role"
   role <- c("editor", "senior.editor")
 
   editor <- cbind(data.frame(role[1]), person.id = editor_id) %>% rename(role = role.1.) #combine editor data
