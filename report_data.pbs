@@ -27,6 +27,8 @@ compdir="ejp_transfer_comp" #compiled files from all transfers
 ######################################################
 #unzip files from today's transfer
 
+mkdir reports/$(date +'%Y_%m_%d') #make destination folder for report
+
 mkdir data/$dir #create folder to contain most recent transfer
 
 ls data/
