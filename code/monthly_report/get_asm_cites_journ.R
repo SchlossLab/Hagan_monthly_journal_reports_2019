@@ -13,11 +13,7 @@ journal_cites_plot <- cites_data %>%
        subtitle = "Articles published in the previous 12 to 36 months")+
   my_theme
 
-#citations according to the manuscript category----
-category_cites_data <- cites_data %>% 
-  mutate(category = collapse_cat(.$category)) #group categories
-
-cat_cites_plot <- category_cites_data %>% ggplot()+
+cat_cites_plot <- category_cites %>% ggplot()+
   geom_boxplot(aes(x=category, y=measure.values))+
   labs(x = "Category", y = "Article Cites",
        title = " Article Cites Based on Category",

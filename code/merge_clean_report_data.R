@@ -70,6 +70,8 @@ clean_report_data <- report_data_ed %>%
          "months.published" = "Published Months", "Total Article Cites"= "Cites",
          "Abstract" = "Total Abstract", "HTML" = "Total HTML", "PDF" = "Total PDF") %>% 
   gather(`Total Article Cites`:PDF, key = measure.names, value = measure.values) %>% #tidy impact data
+  mutate(category = collapse_cat(.$category)) %>% 
+  filter(measure.names != "Measure By") %>% 
   distinct()
 
 write_csv(clean_report_data, paste0("processed_data/report_data", this_ym,".csv"))

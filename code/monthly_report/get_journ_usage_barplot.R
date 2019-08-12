@@ -1,6 +1,6 @@
 #Plots of usage stats for journal: YTD bar graphs w. web, PDF, unique users
 
-drop.measure.names <- c("Measure By", "Article Cites / Month", 
+drop.measure.names <- c("Article Cites / Month", 
                         "Published Months", "Total Article Cites")
 
 stats_data <- data %>% 

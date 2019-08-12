@@ -1,14 +1,16 @@
 #Plots of usage stats for journal: YTD bar graphs w. web, PDF, unique users
 
+#dataset
 journ_usage_data <- data %>% filter(journal == this_journal) %>% 
-  filter_12_mo(., .$publication.date) %>% 
+  filter_12_mo(., .$publication.date) %>% #usage stats from last year
   filter(measure.names == "Abstract" | measure.names == "HTML" | measure.names == "PDF") %>% 
-  mutate(measure.values.per.k = measure.values/100) %>% 
-  mutate(category = strtrim(category, 45))
+  mutate(measure.values.per.k = measure.values/100) %>% #actually values per 100, not 1000(k)
+  mutate(category = strtrim(category, 45)) #restrict category length to 45 characters
 
+#usage stats plotted according measure type
 total_views <- journ_usage_data %>% 
   group_by(measure.names) %>% 
-  summarise(total = sum(measure.values.per.k, na.rm = TRUE)) %>% 
+  summarise(total = sum(measure.values.per.k, na.rm = TRUE)) %>% #add totals for each measure
   ggplot()+
   geom_col(aes(x = measure.names, y = total))+
   labs(title = "Total Article Views", 
@@ -16,9 +18,11 @@ total_views <- journ_usage_data %>%
        y = "Total Views (x100)")+
   my_theme_horiz
 
+#usage stats plotted according to month articles were published
 date_views <- journ_usage_data %>% 
-  group_by(floor_date(ymd(publication.date), unit = "month"), measure.names) %>% 
-  summarise(total.views = sum(measure.values.per.k, na.rm = TRUE)) %>% 
+  group_by(floor_date(ymd(publication.date), 
+                      unit = "month"), measure.names) %>% 
+  summarise(total.views = sum(measure.values.per.k, na.rm = TRUE)) %>% #usage by month published
   ggplot()+
   geom_line(aes(x = `floor_date(ymd(publication.date), unit = "month")`, 
                 y = total.views, color = measure.names))+
@@ -28,8 +32,9 @@ date_views <- journ_usage_data %>%
        subtitle = "Includes articles published in last 12 months")+
   my_theme_horiz
 
-
-cat_views <- if(this_journal %in% no_cat_journ) {journ_usage_data %>% 
+#usage stats plotted according to manuscript category/type
+cat_views <- if(this_journal %in% no_cat_journ) {#plot by manu type for journals w/o categories
+  journ_usage_data %>% 
     group_by(manuscript.type, measure.names) %>% 
   summarise(total = sum(measure.values.per.k, na.rm = TRUE)) %>% 
   ggplot()+
@@ -39,7 +44,8 @@ cat_views <- if(this_journal %in% no_cat_journ) {journ_usage_data %>%
   facet_grid(~measure.names, scales = "free")+
   labs(y = "Total (x100)", x = "Manuscript Type", title = "Article Views by Manuscript Type",
        subtitle = "Includes articles published in the last 12 months")+
-  my_theme} else {journ_usage_data %>% 
+  my_theme} else { #plot by category type
+    journ_usage_data %>% 
       group_by(category, measure.names) %>% 
       summarise(total = sum(measure.values.per.k, na.rm = TRUE)) %>% 
       ggplot()+

@@ -1,13 +1,13 @@
 #stats over time (smooth dot plot, one line for each stat)
 
-drop.measure.names <- c("Measure By", "Article Cites / Month", "Published Months", "Total Article Cites")
+drop.measure.names <- c("Article Cites / Month", 
+                        "Published Months", "Total Article Cites")
 
 stats_data <- data %>% 
   filter_12_mo(., .$publication.date) %>% #published in last 12 months
   filter(!(measure.names %in% drop.measure.names)) %>% 
   mutate(measure.values.per.month = measure.values/months.published,
-         measure.values.per.k = measure.values/1000) %>% #divide total measure values by 1000 for plottable values
-  mutate(category = collapse_cat(.$category)) #group categories
+         measure.values.per.k = measure.values/1000) #divide total measure values by 1000 for plottable values
 
 #all_stats_data %>% group_by(journal, measure.names) %>% #  summarise(total = sum(measure.values))
 
