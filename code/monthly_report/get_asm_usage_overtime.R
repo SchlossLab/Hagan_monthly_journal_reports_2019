@@ -95,11 +95,13 @@ stats_data <- data %>%
 #       subtitle = "Articles published in last 12 months")+
 #  my_theme_horiz
 
+#
 asm_time <- stats_data %>% 
   group_by(journal, floor_date(ymd(publication.date), unit = "month"), measure.names) %>% 
   summarise(total.views = sum(measure.values.per.k)) %>% 
   ggplot()+
-  geom_line(aes(x=`floor_date(ymd(publication.date), unit = "month")`, y=total.views, color = measure.names, group = measure.names))+
+  geom_line(aes(x=`floor_date(ymd(publication.date), unit = "month")`, 
+                y=total.views, color = measure.names, group = measure.names))+
   facet_wrap( ~ journal, scales = "free_y", shrink = TRUE,
               strip.position = "right", ncol = 1)+
   labs(x = "Month of Publication",
