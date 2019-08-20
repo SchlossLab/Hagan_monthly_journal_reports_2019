@@ -8,15 +8,14 @@ compdir = "data/ejp_transfer_comp" #compiled files from all transfers
 passphrase_file = "pass"
 
 checkpoint download:
-    output: dir(tempdir)
+    input:
+        "code/sftp.batch"
+    output:
+        dir(tempdir)
     params:
         tempdir = tempdir
     shell:
-        """
-        sftp -b sftp_batch ejpress
-        get *.zip {params.tempdir}
-        bye
-        """
+        "sftp -b {input} ejpress"
 
 def get_zip_filenames(wildcards):
     dir = checkpoints.download.get(**wildcards).output.dir
