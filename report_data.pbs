@@ -14,77 +14,7 @@ pwd
 
 cd $PBS_O_WORKDIR
 
-#assumes that "sftp -b sftp_batch ejpress" has already been completed
-
-dir="ejp_transfer_$(date +'%Y_%m_%d')" #folder containing the transfer completed on today's date
-
-tempdir="ejp_transfer_temp" #temporary file placement from sftp
-
-compdir="ejp_transfer_comp" #compiled files from all transfers
-
-
-
-######################################################
-#unzip files from today's transfer
-
-mkdir reports/$(date +'%Y_%m_%d') #make destination folder for report
-
-mkdir data/$dir #create folder to contain most recent transfer
-
-ls data/
-
-cp data/$tempdir/*.zip data/$dir #copy most recent transfer zipped files to new folder
-
-cd data/$dir
-
-ls #confirm transfer
-
-unzip '*.zip' #unzip new files in new directory
-
-cd ../ #puts you back into the data folder
-
-pwd
-
-######################################################
-#unencrypt & decompress previous files and merge with files from today's transfer
-
-gpg --batch --passphrase-file ../pass --output $compdir.tar.gz --decrypt $compdir.tar.gz.gpg #unencrypt directory with all prior xml files compiled
-
-tar xzf ${compdir}.tar.gz #decompress compiled directory
-
-cp $dir/*.xml $compdir/ #move unzipped xml files into compiled directory (updated xml files will replace old versions)
-
-cd ../ #move back up to project root
-
-pwd
-
-##################################################
-
-Rscript code/run_monthly_reports.R #generate monthly reports
-
-#################################################
-#encrypt compliled and standalone versions of today's transfer & delete unencrypted data
-
-cd data/
-
-ls
-
-tar czf ${dir}.tar.gz $dir #compress today's transfer
-
-gpg --batch --passphrase-file ../pass -c $dir.tar.gz #save today's transfer as encrypted file
-
-rm $tempdir/*.zip $dir/*.xml $dir/*.zip #delete unencrypted files from today's transfer
-
-rmdir $dir #delete today's directory
-
-tar czf ${compdir}.tar.gz $compdir #compress new compiled files
-
-gpg --batch --passphrase-file ../pass -c $compdir.tar.gz #encrypt new compiled files
-
-rm $compdir/*.xml $dir.tar.gz $compdir.tar.gz #delete remaining unencrypted data
-
-ls
+snakemake
+snakemake cleanup
 
 stat -f $PBS_JOBID
-~                                                                               
-~     
