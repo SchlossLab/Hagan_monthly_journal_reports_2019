@@ -4,7 +4,9 @@
 
 problem_data <- data %>% 
   filter(journal == this_journal) %>% 
-  filter(status == "Waiting for Revision") %>% 
-  filter(decision.date >= days(90)) %>% 
-  mutate(days.since.decision = as.duration(ymd_hms(decision.date) %--% today())/ddays(1)) %>% 
-  select(manuscript.number, editor, approved.date, decision.date, days.since.decision, status)
+  filter(status == "Waiting for Revision") %>% #identify papers left w/ authors
+  filter(decision.date >= days(90)) %>% #restrict to those waiting more than 90 days
+  mutate(days.since.decision = #calculate days since last decision made
+           as.duration(ymd_hms(decision.date) %--% today())/ddays(1)) %>% 
+  select(manuscript.number, editor, approved.date, 
+         decision.date, days.since.decision, status)

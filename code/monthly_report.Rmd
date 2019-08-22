@@ -8,7 +8,7 @@ output:
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
-
+#hyperlinks above allow for paginated tables
 ```
 
 #Submissions
@@ -123,7 +123,7 @@ source("monthly_report/get_est_jif.R")
 knitr::kable(est_jif, format = "html", 
              escape = FALSE, digits = 2,
              col.names = c("Journal", "Total Cites", 
-                                                                 "Citable Items", "Impact Factor")) %>%
+                           "Citable Items", "Impact Factor")) %>%
   footnote(general = "Rolling impact factor calculated from citations over the last 12-24 months on 
            publications 24 to 48 months old") %>% 
   kable_styling()

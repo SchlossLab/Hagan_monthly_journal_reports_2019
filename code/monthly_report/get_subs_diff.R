@@ -1,4 +1,4 @@
-#Difference in submissions from previous year
+#Difference in submissions from previous year -- not included in report
 #Columns: journal, 2014 - 2017, 2018 (ytd) 
 #Final rows: all journals, all journals except mSystems & mSphere
 #Data needed: journal, submission date - everything from last 4-5 years
