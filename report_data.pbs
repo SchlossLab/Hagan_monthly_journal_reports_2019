@@ -35,20 +35,25 @@ cp data/$tempdir/*.zip data/$dir #copy most recent transfer zipped files to new 
 
 cd data/$dir
 
+echo cd data/$dir
+
 ls #confirm transfer
 
 unzip '*.zip' #unzip new files in new directory
 
 cd ../ #puts you back into the data folder
 
+
 pwd
 
 ######################################################
 #unencrypt & decompress previous files and merge with files from today's transfer
 
-gpg --batch --passphrase-file ../pass --output $compdir.tar.gz --decrypt $compdir.tar.gz.gpg #unencrypt directory with all prior xml files compiled
+gpg --batch --passphrase-file ../pass --output ${compdir}_decry.tar.gz --decrypt ${compdir}.tar.gz.gpg #unencrypt directory with all prior xml files compiled
 
-tar xzf ${compdir}.tar.gz #decompress compiled directory
+tar -vxzf ${compdir}_decry.tar.gz #decompress compiled directory
+
+ls
 
 cp $dir/*.xml $compdir/ #move unzipped xml files into compiled directory (updated xml files will replace old versions)
 
@@ -67,22 +72,28 @@ cd data/
 
 ls
 
+rm $dir/*.xml
+
+ls $dir
+
 tar czf ${dir}.tar.gz $dir #compress today's transfer
 
-gpg --batch --passphrase-file ../pass -c $dir.tar.gz #save today's transfer as encrypted file
+gpg --batch --passphrase-file ../pass -c ${dir}.tar.gz #save today's transfer as encrypted file
 
-rm $tempdir/*.zip $dir/*.xml $dir/*.zip #delete unencrypted files from today's transfer
+rm $tempdir/*.zip $dir/*.zip #delete unencrypted files from today's transfer
 
 rmdir $dir #delete today's directory
 
-tar czf ${compdir}.tar.gz $compdir #compress new compiled files
+tar czf ${compdir}.tar.gz ${compdir}_decry #compress new compiled files
 
-gpg --batch --passphrase-file ../pass -c $compdir.tar.gz #encrypt new compiled files
+gpg --batch --yes --passphrase-file ../pass -c ${compdir}.tar.gz #encrypt new compiled files
 
-rm $compdir/*.xml $dir.tar.gz $compdir.tar.gz #delete remaining unencrypted data
+rm ${compdir}/*.xml ${dir}.tar.gz ${compdir}_decry.tar.gz ${compdir}.tar.gz #delete remaining unencrypted data
+
+rmdir $compdir/
 
 ls
 
 stat -f $PBS_JOBID
 ~                                                                               
-~     
+~    
