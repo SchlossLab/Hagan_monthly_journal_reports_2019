@@ -41,7 +41,7 @@ echo cd data/$dir
 
 ls #confirm transfer
 
-unzip '*.zip' #unzip new files in new directory
+unzip -o '*.zip' #unzip new files in new directory
 
 cd ../ #puts you back into the data folder
 
@@ -57,7 +57,7 @@ tar -vxzf ${compdir}_decry.tar.gz #decompress compiled directory
 
 ls
 
-cp $dir/*.xml $compdir/ #move unzipped xml files into compiled directory (updated xml files will replace old versions)
+cp -f $dir/*.xml $compdir/ #move unzipped xml files into compiled directory (updated xml files will replace old versions)
 
 cd ../ #move back up to project root
 
