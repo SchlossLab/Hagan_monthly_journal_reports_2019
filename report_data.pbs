@@ -1,7 +1,7 @@
 #!/bin/sh
 #PBS -N monthly_report
 #PBS -l nodes=1:ppn=8,mem=46gb
-#PBS -l walltime=10:00:00
+#PBS -l walltime=20:00:00
 #PBS -j oe
 #PBS -m abe
 #PBS -V
@@ -22,14 +22,14 @@ tempdir="ejp_transfer_temp" #temporary file placement from sftp
 
 compdir="ejp_transfer_comp" #compiled files from all transfers
 
-
-
 ######################################################
 #unzip files from today's transfer
 
 mkdir reports/$(date +'%Y_%m_%d') #make destination folder for report
 
 mkdir data/$dir #create folder to contain most recent transfer
+
+mkdir data/${compdir}_decry #make folder to contain compiled data files
 
 ls data/
 
@@ -53,11 +53,11 @@ pwd
 
 gpg --batch --passphrase-file ../pass --output ${compdir}_decry.tar.gz --decrypt ${compdir}.tar.gz.gpg #unencrypt directory with all prior xml files compiled
 
-tar -vxzf ${compdir}_decry.tar.gz #decompress compiled directory
+tar xvzf ${compdir}_decry.tar.gz -C ${compdir}_decry/ #decompress compiled directory
 
 ls
 
-cp -f $dir/*.xml $compdir/ #move unzipped xml files into compiled directory (updated xml files will replace old versions)
+cp -f $dir/*.xml ${compdir}_decry/ #move unzipped xml files into compiled directory (updated xml files will replace old versions)
 
 cd ../ #move back up to project root
 
