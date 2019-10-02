@@ -7,7 +7,8 @@ editor_assign_needed_data <- data %>% filter(journal == this_journal) %>% #pull 
   select(manuscript.number, editor, version, submitted.date) %>% #get relevant data
   separate(submitted.date, c("year", "month", "day"), sep = "-") %>% 
   select(-day) %>% #determine submission year & month
-  filter(version == "0") %>% filter(year == this_year) #restrict to first version submitted this year
+  filter(version == "0") %>% filter(year == this_year) %>%  #restrict to first version submitted this year
+  distinct()
 
 #df of the number of manuscripts assigned to each editor by month----
 by_editor <- editor_assign_needed_data %>% 

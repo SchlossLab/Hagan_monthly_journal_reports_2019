@@ -3,7 +3,9 @@
 
 cites_data <- data %>% 
   filter_12_to_36_mo(., .$publication.date) %>% #articles published between 1 and 3 years previous
-  filter(measure.names == "Total Article Cites")
+  filter(measure.names == "Total Article Cites") %>% 
+  select(manuscript.number, months.published, measure.names, 
+         measure.values, publication.date, category, journal) %>% distinct()
 
 #citations by journal----
 journal_cites_plot <- cites_data %>% 
@@ -13,7 +15,7 @@ journal_cites_plot <- cites_data %>%
        subtitle = "Articles published in the previous 12 to 36 months")+
   my_theme
 
-cat_cites_plot <- category_cites %>% ggplot()+
+cat_cites_plot <- cites_data %>% ggplot()+
   geom_boxplot(aes(x=category, y=measure.values))+
   labs(x = "Category", y = "Article Cites",
        title = " Article Cites Based on Category",

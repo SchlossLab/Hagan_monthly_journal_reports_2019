@@ -9,6 +9,7 @@ asm_subs <- data %>% filter(version == "0") %>% #only one entry per submission
   distinct()
 
 asm_subs_plot <- asm_subs %>% 
+  select(manuscript.number, sub.year, sub.month) %>% distinct() %>% 
   group_by(sub.year, sub.month) %>% 
   summarise(n = n()) %>% #count submissions per month/year
   ggplot()+

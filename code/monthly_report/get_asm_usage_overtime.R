@@ -6,6 +6,8 @@ drop.measure.names <- c("Article Cites / Month",
 stats_data <- data %>% 
   filter_12_mo(., .$publication.date) %>% #published in last 12 months
   filter(!(measure.names %in% drop.measure.names)) %>% 
+  select(manuscript.number, months.published, measure.names, 
+         measure.values, publication.date, category, journal) %>% distinct() %>% 
   mutate(measure.values.per.month = measure.values/months.published,
          measure.values.per.k = measure.values/1000) #divide total measure values by 1000 for plottable values
 

@@ -3,7 +3,9 @@
 
 cites_month_data <- data %>% 
   filter_12_to_36_mo(., .$publication.date) %>% 
-  filter(measure.names == "Article Cites / Month")
+  filter(measure.names == "Article Cites / Month") %>% 
+  select(manuscript.number, months.published, measure.names, 
+         measure.values, publication.date, category, journal) %>% distinct()
 
 journal_cites_month_plot <- cites_Month_data %>% 
   ggplot()+

@@ -2,6 +2,8 @@ library(tidyverse)
 library(lubridate)#convert date formats
 library(xml2)#for html2txt function
 
+source("code/get_collapsed_categories.R")#code for cross journal categories
+
 #Relevant Functions----
 #function to convert html ecoded characters to text
 html2txt <- function(str) {
@@ -70,7 +72,7 @@ clean_report_data <- report_data_ed %>%
          "months.published" = "Published Months", "Total Article Cites"= "Cites",
          "Abstract" = "Total Abstract", "HTML" = "Total HTML", "PDF" = "Total PDF") %>% 
   gather(`Total Article Cites`:PDF, key = measure.names, value = measure.values) %>% #tidy impact data
-  mutate(category = collapse_cat(.$category)) %>% 
+  mutate(category = collapse_cats(.$category)) %>% 
   filter(measure.names != "Measure By") %>% 
   distinct()
 

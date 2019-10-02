@@ -1,7 +1,7 @@
 source("code/report_xml_parse_functions.R") #source functions & libraries
 
 #generate list of xml files in the directory containing most recent versions of all manuscripts
-all_xml_list <- list.files(path = "data/ejp_transfer_comp", 
+all_xml_list <- list.files(path = "data/ejp_transfer_comp_decry", 
   pattern = "\\.xml$", full.names = TRUE, recursive = TRUE) 
 
 #parse & get top root of all xml files, req'd for parsing

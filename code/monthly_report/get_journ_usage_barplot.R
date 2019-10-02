@@ -6,11 +6,14 @@ drop.measure.names <- c("Article Cites / Month",
 stats_data <- data %>% 
   filter_12_mo(., .$publication.date) %>% #published in last 12 months
   filter(!(measure.names %in% drop.measure.names)) %>% #select for abstract/html/pdf data
+  select(manuscript.number, months.published, measure.names, 
+         measure.values, publication.date, category, journal) %>% distinct() %>% 
   mutate(measure.values.per.month = measure.values/months.published) #normalize measures by months published
 
 #Abstract stats----
 #count # of manuscripts with abstract views above 4000
-missed_abstracts <- stats_data %>% filter(measure.names == "Abstract") %>% 
+missed_abstracts <- stats_data %>% 
+    filter(measure.names == "Abstract") %>%
   filter(measure.values.per.month >= 4000) %>% count(manuscript.number) %>% nrow()
 
 abstract_plot <- stats_data %>% filter(measure.names == "Abstract") %>%

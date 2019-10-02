@@ -6,7 +6,7 @@
 
 acc_rej_data <- data %>% 
   filter_12_mo(., ymd_hms(.$decision.date)) %>% #limit to decisions made this year
-  select(journal, manuscript.number, ejp.decision, version.reviewed) %>% #pull needed data
+  select(journal, manuscript.number, ejp.decision, reviewed) %>% #pull needed data
   filter(ejp.decision == "Reject"|ejp.decision == "Accept, no revision") %>% #limit to reject/accept decisions
   unique() #this year only
 
@@ -20,7 +20,7 @@ all_desc <- all_desc %>% rbind(total_row) #bind combined journal decisions to ea
 
 #calculate editorial rejection rates----
 ed_reject <- acc_rej_data %>% 
-  filter(ejp.decision == "Reject" & is.na(version.reviewed)) %>% #select editorial rejections
+  filter(ejp.decision == "Reject" & reviewed == "no") %>% #select editorial rejections
   group_by(journal) %>% summarise(editorial_rejections = n()) %>% #count by journal
   as.data.frame() #convert to dataframe
 
@@ -32,7 +32,7 @@ ed_reject <- ed_reject %>% rbind(ed_rej_row) %>% #bind total ed rej row
 
 #calculate rejection rates----
 reject <- acc_rej_data %>% 
-  filter(ejp.decision == "Reject" & !is.na(version.reviewed)) %>% #rejections following review
+  filter(ejp.decision == "Reject" & reviewed == "yes") %>% #rejections following review
   group_by(journal) %>% summarise(rejected = n()) %>% as.data.frame() #count by journal 
 
 rej_row <- tibble(journal = "All", rejected = sum(reject[1:nrow(reject),2])) #rejections from all journals combined
@@ -42,7 +42,8 @@ reject <- reject %>% rbind(rej_row) %>% #bind total rejection row to each journa
   mutate(percent_rej = get_percent(rejected, all_desc$total)) #add column calculating percents
 
 #calculate acceptance rates----
-accept <- acc_rej_data %>% filter(ejp.decision == "Accept, no revision") %>% #accepts
+accept <- acc_rej_data %>% 
+  filter(ejp.decision == "Accept, no revision") %>% #accepts
   group_by(journal) %>% summarise(accepted = n()) %>% as.data.frame() #count by journals & convert to df
 
 accept_row <- tibble(journal = "All", accepted = sum(accept[1:dim(accept)[1],2])) #generate row for total accepts

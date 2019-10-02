@@ -6,8 +6,8 @@
 
 editor_desc_data <- data %>% filter(journal == this_journal) %>% 
   filter_12_mo(., ymd_hms(.$decision.date)) %>% #manuscripts with decisions made in last 12 months
-  select(editor, ejp.decision, version, days.to.decision, review.recommendation, manuscript.number) %>% 
-  filter(version == "0" & !is.na(review.recommendation)) %>% distinct() #eliminate editorial rejections
+  select(editor, ejp.decision, version, days.to.decision, reviewed, manuscript.number) %>% 
+  filter(version == "0" & reviewed == "yes") %>% distinct() #eliminate editorial rejections
 
 #calculate decision statistics for each editor----
 editor_desc_summary <- editor_desc_data %>% group_by(editor) %>% 

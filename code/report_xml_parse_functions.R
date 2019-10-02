@@ -86,13 +86,15 @@ parse_xml <- function(input_xmltop){
   number_authors <- xmlToDataFrame(nodes = getNodeSet(input_xmltop, "//author-person-id")) %>% 
     n_distinct()#remove duplicated authors (b/c listed more than once if>2 versions)
   status <- get_column(input_xmltop, "//current-stage", "status")
+  review_date <- get_column(input_xmltop, "//referee-started-date", "review.date") %>% head(n = 1) #date sent to first reviewer
   
   #join version data
   version_meta <- cbind(data.frame(manu_number, stringsAsFactors = FALSE), #add unqiue identifier
-                        version, approved_date, submitted_date, decision_date, 
+                        version, approved_date, submitted_date, decision_date, review_date,
                         decision, stringsAsFactors = FALSE) %>% 
     mutate(days.to.decision = as.duration(ymd_hms(submitted.date) %--% 
                                             ymd_hms(decision.date))/ddays(1)) #calculate days to make decision
+           
 
   #join transfer data
   transfers <- get_column(input_xmltop, "//transfers/transfer", "transfer.journal")#scrapes all nodes in person and returns as df
@@ -105,12 +107,13 @@ parse_xml <- function(input_xmltop){
   #dataframe of manuscript meta data
   manu_meta <- cbind(manu_number, related_manu, is_resubmission, category, title, commissioned,
                      manuscript_type, number_authors, doi, ready_for_production_date, 
-                     published_online_date, journal_title, open_access, status)
+                     published_online_date, journal_title, open_access, status, review_date)
   
   #full join of manuscript, version, transfer and people data
   manu_data <- list(version_meta, manu_meta, transfer_data, people) %>% #list all dfs
     reduce(full_join, by = "manuscript.number") %>% #join by manuscript identifier
-    rename("editor.id" = "person.id", "number.authors" = "number_authors")
+    rename("editor.id" = "person.id", "number.authors" = "number_authors") %>% 
+    mutate(reviewed = if_else(is.na(review_date), "no", "yes")) #determine if manuscript was reviewed or not
   
   #print(paste("completed", manu_number[[1]])) #status indicator for troubleshooting help
   

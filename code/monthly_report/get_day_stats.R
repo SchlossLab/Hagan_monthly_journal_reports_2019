@@ -6,15 +6,16 @@
 
 needed_data <- data %>% 
   select(journal, approved.date, days.to.decision, publication.date, 
-         ejp.decision, manuscript.number, version, version.reviewed) %>%
+         ejp.decision, manuscript.number, version, reviewed) %>%
   separate(approved.date, c("date.submitted", "c"), sep = " ", extra = "drop") %>% #drop hms from submitted date
   mutate(days.to.publication = publication.date - ymd(date.submitted)) %>% #calculate days from submission to pub 
-  filter(!is.na(version.reviewed) & ejp.decision != "Reject") %>% #exclude editorial rejections
+  filter(reviewed == "no" & ejp.decision != "Reject") %>% #exclude editorial rejections
   filter_12_mo(., ymd(.$date.submitted)) #restrict to manuscripts submitted within the last 12 months
 
 #for each journal----  
 #calculate median & mean days to first decision
 summary_1 <- needed_data %>% filter(version == "0") %>% #get first decision
+  select(journal, manuscript.number, days.to.decision) %>% distinct() %>% 
   group_by(journal) %>% 
   summarise(n.first.decision = n(), #number of manuscripts
             avg.first.days.to.decision = mean(days.to.decision, na.rm = TRUE), #average
@@ -22,6 +23,7 @@ summary_1 <- needed_data %>% filter(version == "0") %>% #get first decision
 
 #table of average days to publication
 summary_2 <- needed_data %>% filter(!is.na(publication.date)) %>% #get published articles
+  select(journal, manuscript.number, days.to.publication) %>% distinct() %>% 
   group_by(journal) %>% 
   summarise(n.pub = n(), #number of publications
             avg.days.to.pub = mean(days.to.publication, na.rm = TRUE)) #average days to publication
@@ -29,12 +31,14 @@ summary_2 <- needed_data %>% filter(!is.na(publication.date)) %>% #get published
 #for all journals combined----
 #table of median/mean days to first decision
 summary_all_1 <- needed_data %>% filter(version == "0") %>% 
+  select(manuscript.number, days.to.decision) %>% distinct() %>% 
   summarise(n.first.decision = n(), #number of manuscripts
             avg.first.days.to.decision = mean(days.to.decision, na.rm = TRUE), 
             med.first.days.to.decision = median(days.to.decision, na.rm = TRUE))
 
 #table of average days to publication
 summary_all_2 <- needed_data %>% filter(!is.na(publication.date)) %>% 
+  select(manuscript.number, days.to.publication) %>% distinct() %>% 
   summarise(n.pub = n(), #number of publications
             avg.days.to.pub = mean(days.to.publication, na.rm = TRUE))
 

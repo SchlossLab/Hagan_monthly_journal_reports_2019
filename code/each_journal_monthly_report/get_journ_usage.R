@@ -3,6 +3,8 @@
 #dataset
 journ_usage_data <- data %>% filter(journal == this_journal) %>% 
   filter_12_mo(., .$publication.date) %>% #usage stats from last year
+  select(measure.names, measure.values, category, publication.date, 
+         manuscript.type) %>% distinct() %>% 
   filter(measure.names == "Abstract" | measure.names == "HTML" | measure.names == "PDF") %>% 
   mutate(measure.values.per.k = measure.values/100) %>% #actually values per 100, not 1000(k)
   mutate(category = strtrim(category, 45)) #restrict category length to 45 characters

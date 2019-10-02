@@ -8,7 +8,7 @@
 editor_acc_rej_data <- data %>% filter(journal == this_journal) %>% 
   filter_12_mo(., ymd_hms(.$decision.date)) %>% #decisions made in last 12 months
   filter(ejp.decision == "Reject"| ejp.decision == "Accept, no revision") %>% #restrict to reject/accept
-  select(editor, manuscript.number, ejp.decision, version.reviewed) %>% 
+  select(editor, manuscript.number, ejp.decision, reviewed) %>% 
   unique() #single entries only
 
 #count manuscript decisions made by each editor
@@ -17,14 +17,14 @@ editor_all_desc <- editor_acc_rej_data %>%
 
 #summary of proportion of decisions that were editorial rejections---- 
 editor_ed_reject <- editor_acc_rej_data %>% 
-  filter(ejp.decision == "Reject" & is.na(version.reviewed)) %>% #identify editorial rejections
+  filter(ejp.decision == "Reject" & reviewed == "no") %>% #identify editorial rejections
   group_by(editor) %>% summarise(editorial_rejections = n()) %>% #count per editor
   as.data.frame() %>% test_list(editor_all_desc, ., "editor") %>% #generate df listing all editors
   mutate(percent_ed_rej = get_percent(editorial_rejections, editor_all_desc$n)) #calculate percent
 
 #summary of proportion of decisions that were rejected after review---- 
 editor_reject <- editor_acc_rej_data %>% 
-  filter(ejp.decision == "Reject" & !is.na(version.reviewed)) %>% #identify rejections following review
+  filter(ejp.decision == "Reject" & reviewed == "yes") %>% #identify rejections following review
   group_by(editor) %>% summarise(rejected = n()) %>% #count per editor
   as.data.frame() %>% test_list(editor_all_desc, ., "editor") %>% #generate df listing all editors
   mutate(percent_rej = get_percent(rejected, editor_all_desc$n)) #calculate percent

@@ -28,7 +28,6 @@ sub_trends_plot
 ```
 
 ```{r, journ_subs_cat, fig.asp = .9}
-source("each_journal_monthly_report/get_journ_subs.R")
 
 plot_YTD_subs
 ```

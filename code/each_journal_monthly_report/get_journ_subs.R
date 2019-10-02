@@ -3,7 +3,8 @@
 #submissions dataset
 journ_subs_data <- data %>% filter(journal == this_journal) %>% 
   filter(ejp.decision != "Withdrawn") %>% #eliminate manuscripts rejected for scope
-  filter(year(approved.date) >= (this_year - 3)) #restrict to last 3yrs
+  filter(year(approved.date) >= (this_year - 3)) %>%  #restrict to last 3yrs
+  select(approved.date, manuscript.number) %>% distinct()
 
 #years of submissions to plot
 total_years <- year(journ_subs_data$approved.date) %>% unique() %>% length()
@@ -31,7 +32,8 @@ sub_trends_plot <- ggplot(sub_trends_data)+
 
 #data for year-to-date submissions
 YTD_subs_data <- data %>% filter(journal == this_journal) %>% 
-  filter(year(approved.date) == this_year)
+  filter(year(approved.date) == this_year) %>% 
+  select(approved.date, manuscript.number, manuscript.type) %>% distinct()
 
 plot_YTD_subs <- YTD_subs_data %>%  
   ggplot()+
